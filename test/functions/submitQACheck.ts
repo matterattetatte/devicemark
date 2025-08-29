@@ -1,6 +1,24 @@
+import { join } from 'path';
 import { expect } from "chai"
 import { ethers } from "hardhat"
+import { readFileSync } from 'fs'
+import path from 'path';
+import admZip from 'adm-zip';
+
 import { tokens } from "./ClothesQA"
+
+async function getFileByCid(cid) {
+  try {
+    const file = await global.ipfsClient.cat(cid);
+    let content = [];
+    for await (const chunk of file) {
+      content.push(chunk as never);
+    }
+    return Buffer.concat(content).toString()
+  } catch (error) {
+    console.error('Error retrieving file:', error);
+  }
+}
 
 describe("submitQACheck", () => {
   let deployer, clothesQA, clothingNFT, qaFactory, transaction;
@@ -16,11 +34,29 @@ describe("submitQACheck", () => {
     await transaction.wait();
   })
 
-  it("submit first NFT creation", async () => {
-    // Assuming deployer is authorized to call submitQACheck
+  it.only("submit first NFT creation", async () => {
+    const folderPath = path.join(__dirname, '../mock/QAData0');
+    const zip = admZip();
+
+    zip.addLocalFolder(folderPath, 'QAData0');
+
+    const zipData = zip.toBuffer();
+
+    const { cid } = await global.ipfsClient.add({ content: zipData });
+
+    const cidStr = cid.toString();
+    console.log(`Uploaded to IPFS with CID: ${cidStr}`);
+
     const nftId = 1; // example NFT id
     const passed = true; // example check result
-    const details = "Initial quality check passed";
+    const details = JSON.stringify({
+          testType: "color_fastness",
+          result: "No fading observed",
+          testDate: "2025-08-20",
+          standards: "ISO 105-B02",
+          ipfsCID: cidStr,
+          score: 95
+    }) 
 
     // Call submitQACheck on the clothesQA contract
     transaction = await clothesQA.connect(qaFactory).submitQACheck(nftId, passed, details);
@@ -35,9 +71,9 @@ describe("submitQACheck", () => {
     await expect(transaction)
       .to.emit(clothingNFT, "HistoryAdded")
 
-      // TODO: GET THE NFT AND ITS HISTROY
+    const downloadedData = await getFileByCid(cidStr)
 
-      // THEN, NEW TEST WITH SEVERAL NEW EVENTS AFTER EACH OTHER
+    expect(downloadedData).to.equal(zipData.toString())
   });
   it("should submit multiple sequential QA checks and verify NFT history", async () => {
     const nftId = 1; // example NFT id
