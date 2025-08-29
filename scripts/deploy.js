@@ -7,39 +7,44 @@
 import hre from "hardhat"
 import { writeFileSync, readFileSync } from "fs"
 
-const mockPilots = JSON.parse(readFileSync("./mock/pilots.json").toString())
+const mockQAFactories = JSON.parse(readFileSync("./mock/qaFactories.json").toString())
 
 export const tokens = (n) => ethers.parseEther(n.toString())
 
 async function main() {
   // Setup accounts
-  const [deployer, ...pilotSigners] = await ethers.getSigners()
+  const [deployer, ...qaFactorySigners] = await ethers.getSigners()
 
   const PLNC = await hre.ethers.getContractFactory("PLNC")
   const plnc = await PLNC.deploy(deployer.address)
   await plnc.waitForDeployment()
   const plncAddress = await plnc.getAddress()
 
-  // Deploy HeliUber
-  const HeliUber = await hre.ethers.getContractFactory("HeliUber")
-  const heliuber = await HeliUber.deploy(plncAddress)
-  await heliuber.waitForDeployment()
+  const ClothingNFT = await ethers.getContractFactory("ClothingNFT");
+  const clothingNFT = await ClothingNFT.deploy(); // Assumes clothingNFT has no constructor args; adjust if needed
+  await clothingNFT.waitForDeployment();
+  const clothingNFTAddress = await clothingNFT.getAddress()
 
-  const address = await heliuber.getAddress()
+  const ClothesQA = await hre.ethers.getContractFactory("ClothesQA")
+  const clothesQA = await ClothesQA.deploy(plncAddress, clothingNFTAddress)
+  await clothesQA.waitForDeployment()
 
-  console.log(`Deployed HeliUber Contract at: ${address}\n`)
-  console.log(`Check out out in the Sonic Explorer: https://testnet.soniclabs.com/address/${address}\n`)
+  const address = await clothesQA.getAddress()
+
+  console.log('Deployer:', deployer.address)
+  console.log(`Deployed Clothes Contract at: ${address}\n`)
+  console.log(`Check out out in the Sonic Explorer: https://testnet.sonicscan.org/address/${address}\n`)
   console.log(`Update the .env file in ../frontend with the new contract address\n`)
 
-  console.log('Now, registering some random pilots...')
+  console.log('Now, registering some random qaFactories...')
 
-  for (const [index, pilot] of mockPilots.slice(0, 2).entries()) {
-    const pilotBalance = await deployer.provider.getBalance(pilot.pilotAddress)
-    console.log(`Pilot ${pilot.pilotAddress} balance before:`, ethers.formatEther(pilotBalance), 'ETH')
+  for (const [index, qaFactory] of mockQAFactories.slice(0, 2).entries()) {
+    const qaBalance = await deployer.provider.getBalance(qaFactory.address)
+    console.log(`QA Factory ${qaFactory.address} balance before:`, ethers.formatEther(qaBalance), 'ETH')
 
-    if (pilotBalance === 0n) {
+    if (qaBalance === 0n) {
       const fundTx = await deployer.sendTransaction({
-        to: pilot.pilotAddress,
+        to: qaFactory.address,
         value: ethers.parseEther('0.05'), // e.g. 0.05 ETH
       })
       await fundTx.wait()
@@ -48,12 +53,11 @@ async function main() {
       console.log('  → Already has balance, skipping')
     }
 
-    const pilotSigner = pilotSigners[index];
+    const qaFactorySigner = qaFactorySigners[index];
 
-    // TODO: USE IPFS AND ALSO INCLUDE AN IMAGE URL
-    const tx = await heliuber.connect(pilotSigner).registerPilot(pilot.name, pilot.licenseNumber, pilot.imageUrl);
-    await tx.wait();
-    console.log(`Registered pilot: ${pilot.name} with license ${pilot.licenseNumber}`);
+    const transaction = await clothesQA.connect(deployer).registerQAFactory(qaFactorySigner.address, qaFactory.name, qaFactory.certificationNumber);
+    await transaction.wait();
+    console.log(`Registered QA Factory: ${qaFactory.name} with license ${qaFactory.certificationNumber}`);
   }
 
   // now, fund some stablecoins to 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 if 
@@ -62,7 +66,7 @@ async function main() {
   console.log('DEPLOYER ADDRESS', deployer.address)
   // if (hre.network.config.chainId === 31337) {
     // manual user, temp
-    const [userSigner] = pilotSigners.slice(-1)
+    const [userSigner] = qaFactorySigners.slice(-1)
     // const passengerBalance = await deployer.provider.getBalance(userSigner.address)
     const passengerBalance = await plnc.balanceOf(userSigner.address)
 
@@ -71,15 +75,17 @@ async function main() {
       console.log('MINT TOKENA!')
       plnc.mint(userSigner.address, tokens(10000))
     }
-  // }
 
+    // we need to whitelist each signer
 
-  writeFileSync('./frontend/.env', `VITE_HELIUBER_CONTRACT_ADDRESS=${address}\nVITE_PLNC_CONTRACT_ADDRESS=${plncAddress}`, { flag: 'w' })
+    // }
 
-  await hre.run("verify:verify", {
-    address,
-    constructorArguments: [plncAddress],
-  });
+  writeFileSync('./frontend/.env', `CLOTHESQA_CONTRACT_ADDRESS=${address}\nPLNC_CONTRACT_ADDRESS=${plncAddress}\nCLOTHING_NFT_CONTRACT_ADDRESS=${clothingNFTAddress}`, { flag: 'w' })
+
+  // await hre.run("verify:verify", {
+  //   address,
+  //   constructorArguments: [plncAddress],
+  // });
 }
 
 // We recommend this pattern to be able to use async/await everywhere

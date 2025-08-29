@@ -1,9 +1,7 @@
 import { join } from 'path';
 import { expect } from "chai"
-import { ethers } from "hardhat"
-import { readFileSync } from 'fs'
 import path from 'path';
-import admZip from 'adm-zip';
+import AdmZip from 'adm-zip';
 
 import { tokens } from "./ClothesQA"
 
@@ -36,7 +34,7 @@ describe("submitQACheck", () => {
 
   it.only("submit first NFT creation", async () => {
     const folderPath = path.join(__dirname, '../mock/QAData0');
-    const zip = admZip();
+    const zip = new AdmZip();
 
     zip.addLocalFolder(folderPath, 'QAData0');
 

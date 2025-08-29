@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClothesQA NFT Submission</title>
+  <script src="https://unpkg.com/vue@3.4.38/dist/vue.global.js"></script>
+  <script src="https://unpkg.com/ipfs-http-client@60.0.0/dist/index.min.js"></script>
+  <!-- <script src="https://cdn.jsdelivr.net/npm/viem@2.36.0/_cjs/index.min.js"></script> -->
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; }
+    .section { margin-bottom: 20px; }
+    button { padding: 10px; margin-top: 10px; }
+    textarea { width: 100%; height: 150px; }
+    .status { color: #333; }
+    .error { color: red; }
+    .success { color: green; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="section">
+      <h2>Wallet Status</h2>
+      <p>{{ account ? `Connected: ${account}` : 'Not connected' }}</p>
+      <button @click="connectWallet">Connect Wallet</button>
+    </div>
+    <div class="section">
+      <h2>Upload QA Data (.zip)</h2>
+      <input type="file" accept=".zip" @change="handleFileChange" />
+    </div>
+    <div class="section">
+      <h2>NFT ID</h2>
+      <input type="number" v-model.number="nftId" min="1" />
+    </div>
+    <div class="section">
+      <h2>QA Check Passed</h2>
+      <input type="checkbox" v-model="passed" />
+    </div>
+    <div class="section">
+      <h2>QA Details</h2>
+      <textarea v-model="details"></textarea>
+    </div>
+    <button @click="submitQACheck" :disabled="!file || !account">Submit QA Check</button>
+    <div class="section">
+      <h2>Status</h2>
+      <p :class="{ error: status.includes('Error'), success: status.includes('Submitted') }">{{ status }}</p>
+      <div v-if="txHash">
+        <p>Transaction: <a :href="txLink" target="_blank">View on Etherscan</a></p>
+        <p>NFT: <a :href="nftLink" target="_blank">View NFT</a></p>
+
+        <button @click="getAllNFTData">Get all data for NFT</button>
+      </div>
+      <code v-if="nftQARead">
+        {{ nftQARead }}
+      </code>
+    </div>  
+  </div>
+
+  <script type="module">
+    var exports = {}
+    const { createApp } = Vue
+    import { createPublicClient, createWalletClient, http, custom } from 'https://esm.sh/viem';
+    import { sonicTestnet } from 'https://esm.sh/viem/chains'
+
+    sonicTestnet.id = 14601 // hack for now!
+
+
+    createApp({
+      data() {
+        return {
+          account: null,
+          provider: null,
+          contract: null,
+          file: null,
+          nftId: 1,
+          passed: true,
+          details: JSON.stringify(
+            {
+              testType: "color_fastness",
+              result: "No fading observed",
+              testDate: "2025-08-20",
+              standards: "ISO 105-B02",
+              ipfsCID: "",
+              score: 95,
+            },
+            null,
+            2
+          ),
+          status: "Initializing...",
+          txHash: null,
+          txLink: null,
+          nftLink: null,
+          nftQARead: null,
+        };
+      },
+      async created() {
+        // Initialize IPFS client
+        try {
+          this.ipfs = await IpfsHttpClient.create({ host: "localhost", port: 5001, protocol: "http" });
+          this.status = "Connected to local IPFS node";
+        } catch (error) {
+          this.status = "Error: Failed to connect to IPFS node: " + error.message;
+        }
+
+        if (window.ethereum) {
+          window.ethereum.on('accountsChanged', (accounts) => {
+              if (accounts.length === 0) {
+                window.location.href = '/'
+              } else {
+                console.log('🔑 Wallet connected/changed:', accounts[0]);
+              }
+          });
+          this.publicClient = createPublicClient({
+            chain: sonicTestnet,
+            transport: http()
+          });
+
+          this.walletClient = createWalletClient({
+            chain: sonicTestnet,
+            transport: custom(window.ethereum)
+          });
+
+          console.log('wallet client', this.walletClient)
+          // ClothesQA contract ABI
+          const clothesQAABI = [
+            {
+              name: 'submitQACheck',
+              type: 'function',
+              inputs: [
+                { name: 'nftId', type: 'uint256' },
+                { name: 'passed', type: 'bool' },
+                { name: 'details', type: 'string' }
+              ],
+              outputs: [],
+              stateMutability: 'nonpayable'
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "nftId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "getQACheck",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "factory",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "passed",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "string",
+                  "name": "details",
+                  "type": "string"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestamp",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              name: 'QACheckSubmitted',
+              type: 'event',
+              inputs: [
+                { name: 'submitter', type: 'address', indexed: true },
+                { name: 'nftId', type: 'uint256', indexed: true },
+                { name: 'passed', type: 'bool', indexed: false },
+                { name: 'details', type: 'string', indexed: false }
+              ]
+            },
+            {
+              "inputs": [],
+              "name": "NotAllowed",
+              "type": "error"
+            },
+          ];
+
+          this.contract = { address: 'CLOTHESQA_CONTRACT_ADDRESS', abi: clothesQAABI, chainId: sonicTestnet.id };
+        } else {
+          this.status = "Error: Please install MetaMask";
+        }
+      },
+      methods: {
+        async connectWallet() {
+          try {
+            await this.walletClient.switchChain({ id: sonicTestnet.id });
+            const [addr] = await this.walletClient.requestAddresses();
+            this.account = addr
+            this.status = `Wallet connected: ${this.account}`;
+          } catch (error) {
+            console.error(error)
+            this.status = "Error: Failed to connect wallet: " + error.message;
+          }
+        },
+        handleFileChange(event) {
+          this.file = event.target.files[0];
+          this.status = this.file ? `File selected: ${this.file.name}` : "No file selected";
+        },
+        async submitQACheck() {
+          if (!this.file || !this.account) {
+            this.status = "Error: Please connect wallet and select a file";
+            return;
+          }
+
+          try {
+            this.status = "Uploading to IPFS...";
+            const { cid } = await this.ipfs.add(await this.file.text());
+            const cidStr = cid.toString();
+            this.status = `Uploaded to IPFS with CID: ${cidStr}`;
+
+            // Update details with CID
+            const detailsObj = JSON.parse(this.details);
+            detailsObj.ipfsCID = cidStr;
+            const detailsStr = JSON.stringify(detailsObj);
+
+            // Submit to contract
+            this.status = "Submitting to blockchain...";
+            const estimatedGas = await this.publicClient.estimateContractGas({
+              address: this.contract.address,
+              abi: this.contract.abi,
+              functionName: 'submitQACheck',
+              args: [BigInt(this.nftId), this.passed, detailsStr],
+              account: this.account,
+            });
+            const hash = await this.walletClient.writeContract({
+              ...this.contract,
+              functionName: 'submitQACheck',
+              args: [BigInt(this.nftId), this.passed, detailsStr],
+              account: this.account,
+              gas: estimatedGas || BigInt(300000),
+            });
+
+            const receipt = await this.publicClient.waitForTransactionReceipt({ hash });
+            this.status = `Submitted QA check for NFT ID ${this.nftId} with CID: ${cidStr}`;
+            this.txHash = receipt.transactionHash;
+
+            this.txLink = `https://testnet.sonicscan.org/tx/${this.txHash}`;
+            this.nftLink = `https://testnet.sonicscan.org/address/CLOTHING_NFT_CONTRACT_ADDRESS?a=${this.nftId}`;
+          } catch (error) {
+            console.log(error)
+            this.status = "Error: " + error.message;
+          }
+        },
+        async getAllNFTData() {
+           const [,, data] = await this.publicClient.readContract({
+              ...this.contract,
+              functionName: 'getQACheck',
+              args: [BigInt(this.nftId)],
+            });
+
+            const parsedData = JSON.parse(data)
+
+            parsedData.ipfsDataUrl = `http://localhost:8080/ipfs/${parsedData.ipfsCID}`
+
+            this.nftQARead = JSON.stringify(parsedData, null, 4)
+        }
+      },
+    }).mount("#app");
+  </script>
+</body>
+</html>
