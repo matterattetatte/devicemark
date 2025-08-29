@@ -1,0 +1,27 @@
+{
+  "name": "heliuber",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "hh:test:debug": "node --inspect-brk node_modules/.bin/hardhat test test/ClothesQA.ts",
+    "hh:test": "hardhat test test/ClothesQA.ts",
+    "deploy:sonic": "hardhat compile && hardhat run scripts/deploy.js --network sonic",
+    "node:local": "hardhat node --port 8545",
+    "deploy:local": "hardhat compile && hardhat run scripts/deploy.js --network localhost",
+    "symlink:plnc": "mkdir -p frontend/src/abis && ln -sf \"$PWD/artifacts/contracts/mock/PLNC.sol/PLNC.json\" frontend/src/abis/PLNC.json && ln -sf \"$PWD/artifacts/contracts/mock/PLNC.sol/PLNC.dbg.json\" frontend/src/abis/PLNC.db.json"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.9",
+    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
+    "@nomicfoundation/hardhat-verify": "^2.1.0",
+    "@openzeppelin/contracts-upgradeable": "^5.3.0",
+    "@types/chai": "^4.3.20",
+    "dotenv": "^17.2.0",
+    "hardhat": "^2.25.0"
+  },
+  "dependencies": {
+    "csv-parse": "^6.1.0",
+    "csv-stringify": "^6.6.0",
+    "date-fns-tz": "^3.2.0"
+  }
+}
