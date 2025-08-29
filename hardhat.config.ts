@@ -10,12 +10,12 @@ import '@nomicfoundation/hardhat-chai-matchers'
 
 /** @type import('hardhat/config').HardhatUserConfig */
 
-module.exports = {
+export default {
   solidity: "0.8.20",
   networks: {
     sonic: {
-      url: "https://rpc.blaze.soniclabs.com",
-      accounts: [process.env.SONIC_PRIVATE_KEY]
+      url: "https://rpc.testnet.soniclabs.com",
+       accounts: [process.env.SONIC_PRIVATE_KEY]
     },
     localhost: {
       url: "http://127.0.0.1:8545",
@@ -27,7 +27,7 @@ module.exports = {
       customChains: [
         {
           network: "sonicTestnet",
-          chainId: 57054,
+          chainId: 14601,
           urls: {
             apiURL: "https://api-testnet.sonicscan.org/api",
             browserURL: "https://testnet.sonicscan.org",
