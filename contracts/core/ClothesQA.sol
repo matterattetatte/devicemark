@@ -1,0 +1,124 @@
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.20;
+
+import "@openzeppelin/contracts/access/Ownable.sol";
+
+import "../interfaces/IClothesQA.sol";
+import "./ClothingNFT.sol";
+import "../mock/PLNC.sol";
+
+contract ClothesQA is IClothesQA, Ownable {
+    // State variables
+    PLNC public immutable plncToken; // PLNC token contract
+    ClothingNFT public immutable clothingNFT; // PLNC token contract
+    address[] public allowedFactories; // Array of allowed QA factory addresses
+    mapping(address => Factory) public factories; // Mapping of factory details
+    mapping(uint256 => QACheck) public qaChecks; // Mapping of NFT ID to QA check results
+
+    // Structs
+    struct Factory {
+        string name;
+        string certificationNumber;
+        bool isRegistered;
+    }
+
+    struct QACheck {
+        address factory;
+        bool passed;
+        string details; // JSON or stringified test results
+        uint256 timestamp;
+    }
+
+    // Modifiers
+    modifier onlyAllowed() {
+        if (!isFactoryAllowed(msg.sender)) revert NotAllowed();
+        _;
+    }
+
+    constructor(PLNC _plncToken, ClothingNFT _nftContract) Ownable(msg.sender) {
+        if (address(_plncToken) == address(0) || address(_nftContract) == address(0)) revert ZeroAddress();
+        plncToken = _plncToken;
+        clothingNFT = _nftContract;
+    }
+
+    // Check if an address is an allowed factory
+    function isFactoryAllowed(address factory) public view returns (bool) {
+        return factories[factory].isRegistered;
+    }
+
+    // Register a QA factory
+    function registerQAFactory(address factoryAddress, string calldata name, string calldata certificationNumber) external onlyOwner {
+        if (bytes(name).length == 0 || bytes(certificationNumber).length == 0) revert InvalidInput(); // Fixed validation
+        if (factories[factoryAddress].isRegistered) revert AlreadyRegistered();
+
+        // Register factory
+        factories[factoryAddress] = Factory({
+            name: name,
+            certificationNumber: certificationNumber,
+            isRegistered: true
+        });
+        allowedFactories.push(factoryAddress);
+
+        emit FactoryRegistered(factoryAddress, name, certificationNumber);
+    }
+
+    // Unregister a QA factory
+    function unRegisterQAFactory() external override {
+        if (!factories[msg.sender].isRegistered) revert NotRegistered();
+
+        // Remove from mapping and array
+        delete factories[msg.sender];
+        for (uint256 i = 0; i < allowedFactories.length; i++) {
+            if (allowedFactories[i] == msg.sender) {
+                allowedFactories[i] = allowedFactories[allowedFactories.length - 1];
+                allowedFactories.pop();
+                break;
+            }
+        }
+
+        // Optional: Refund staked tokens (if any)
+        uint256 refundAmount = 100 * 10**plncToken.decimals(); // Example: Refund 100 PLNC
+        plncToken.transfer(msg.sender, refundAmount);
+
+        emit FactoryUnregistered(msg.sender);
+    }
+
+    // Submit a QA check for an NFT
+    function submitQACheck(uint256 nftId, bool passed, string calldata details) external override onlyAllowed {
+        // Verify NFT exists and is owned by someone
+        try clothingNFT.ownerOf(nftId) returns (address owner) {
+            if (owner == address(0)) revert InvalidNFT();
+        } catch {
+            // If NFT doesn't exist, mint a new one to the factory (assumed workflow)
+            clothingNFT.mint(msg.sender, nftId);
+        }
+
+        // Store QA check results
+        qaChecks[nftId] = QACheck({
+            factory: msg.sender,
+            passed: passed,
+            details: details,
+            timestamp: block.timestamp
+        });
+
+        clothingNFT.addHistory(nftId, passed, details);
+
+        emit QACheckSubmitted(msg.sender, nftId, passed, details);
+    }
+
+    function getQAFactoriesList() external view returns (address[] memory) {
+        return allowedFactories;
+    }
+
+    // Helper: Get factory details
+    function getFactory(address factory) external view returns (string memory name, string memory certificationNumber, bool isRegistered) {
+        Factory memory f = factories[factory];
+        return (f.name, f.certificationNumber, f.isRegistered);
+    }
+
+    // Helper: Get QA check details
+    function getQACheck(uint256 nftId) external view returns (address factory, bool passed, string memory details, uint256 timestamp) {
+        QACheck memory check = qaChecks[nftId];
+        return (check.factory, check.passed, check.details, check.timestamp);
+    }
+}
