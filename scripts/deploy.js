@@ -82,10 +82,10 @@ async function main() {
 
   writeFileSync('./frontend/.env', `CLOTHESQA_CONTRACT_ADDRESS=${address}\nPLNC_CONTRACT_ADDRESS=${plncAddress}\nCLOTHING_NFT_CONTRACT_ADDRESS=${clothingNFTAddress}`, { flag: 'w' })
 
-  // await hre.run("verify:verify", {
-  //   address,
-  //   constructorArguments: [plncAddress],
-  // });
+  await hre.run("verify:verify", {
+    address: clothingNFTAddress,
+    constructorArguments: [],
+  });
 }
 
 // We recommend this pattern to be able to use async/await everywhere

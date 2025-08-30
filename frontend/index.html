@@ -214,7 +214,14 @@
 
           try {
             this.status = "Uploading to IPFS...";
-            const { cid } = await this.ipfs.add(await this.file.text());
+
+            const fileBuffer = await this.file.arrayBuffer();
+            
+            const fileData = new Uint8Array(fileBuffer);
+            
+            const { cid } = await this.ipfs.add(fileData, {
+              // pin: true, // Pin the file on IPFS
+            });
             const cidStr = cid.toString();
             this.status = `Uploaded to IPFS with CID: ${cidStr}`;
 
@@ -252,17 +259,61 @@
           }
         },
         async getAllNFTData() {
-           const [,, data] = await this.publicClient.readContract({
-              ...this.contract,
-              functionName: 'getQACheck',
-              args: [BigInt(this.nftId)],
+           const data = await this.publicClient.readContract({
+              address: 'CLOTHING_NFT_CONTRACT_ADDRESS', 
+              abi: [
+                {
+                  "inputs": [
+                    {
+                      "internalType": "uint256",
+                      "name": "tokenId",
+                      "type": "uint256"
+                    }
+                  ],
+                  "name": "getHistory",
+                  "outputs": [
+                    {
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "timestamp",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "bool",
+                          "name": "passed",
+                          "type": "bool"
+                        },
+                        {
+                          "internalType": "string",
+                          "name": "details",
+                          "type": "string"
+                        }
+                      ],
+                      "internalType": "struct ClothingNFT.HistoryEvent[]",
+                      "name": "",
+                      "type": "tuple[]"
+                    }
+                  ],
+                  "stateMutability": "view",
+                  "type": "function"
+                },
+              ],
+              functionName: 'getHistory',
+              args: [BigInt(this.nftId)]
             });
 
-            const parsedData = JSON.parse(data)
 
-            parsedData.ipfsDataUrl = `http://localhost:8080/ipfs/${parsedData.ipfsCID}`
+            data.forEach((item) => {
+              const parsedDetails = JSON.parse(item.details)
+              item.details = {
+                details: parsedDetails,
+                ipfsDataUrl: `http://localhost:8080/ipfs/${parsedDetails.ipfsCID}`,
+              },
+              item.timestamp = item.timestamp.toString()
+            })
 
-            this.nftQARead = JSON.stringify(parsedData, null, 4)
+            this.nftQARead = JSON.stringify(data, null, 4)
         }
       },
     }).mount("#app");
