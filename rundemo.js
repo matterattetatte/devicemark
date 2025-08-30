@@ -1,5 +1,6 @@
 import { exec, execSync } from 'child_process'
 import { readFileSync } from 'fs'
+import open from 'open'
 import {config} from "dotenv"
 config({ path: './frontend/.env' })
 
@@ -17,3 +18,5 @@ export default async (req, res) => {
   .replace(/CLOTHING_NFT_CONTRACT_ADDRESS/g, process.env.CLOTHING_NFT_CONTRACT_ADDRESS)
   ;
 };
+
+open('http://localhost:3000');

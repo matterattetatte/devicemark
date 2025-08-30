@@ -4,9 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ClothesQA NFT Submission</title>
-  <script src="https://unpkg.com/vue@3.4.38/dist/vue.global.js"></script>
-  <script src="https://unpkg.com/ipfs-http-client@60.0.0/dist/index.min.js"></script>
-  <!-- <script src="https://cdn.jsdelivr.net/npm/viem@2.36.0/_cjs/index.min.js"></script> -->
+  <script defer id="vue-cdn" src="https://unpkg.com/vue@3.4.38/dist/vue.global.js"></script>
+  <script defer src="https://unpkg.com/ipfs-http-client@60.0.0/dist/index.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; }
     .section { margin-bottom: 20px; }
@@ -18,6 +17,7 @@
   </style>
 </head>
 <body>
+<div class="visible" id="spinner"></div>
 <div id="app">
   <div class="section">
     <h2>Wallet Status</h2>
@@ -45,7 +45,7 @@
     <h2>Status</h2>
     <p :class="{ error: status.includes('Error'), success: status.includes('Submitted') }">{{ status }}</p>
     <div v-if="txHash" class="links">
-      <p>Transaction: <a :href="txLink" target="_blank" class="link">View on Etherscan</a></p>
+      <p>Transaction: <a :href="txLink" target="_blank" class="link">View in blockchain explorer</a></p>
       <p>NFT: <a :href="nftLink" target="_blank" class="link">View NFT</a></p>
       <button @click="getAllNFTData" class="btn btn-secondary">Get all data for NFT</button>
     </div>
@@ -79,6 +79,36 @@ body {
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  transition: opacity 1s ease-in-out;
+  opacity: 0;
+}
+
+#app.visible {
+  opacity: 1;
+}
+
+#spinner {
+  position: relative;
+  width: 30px;
+  height: 30px;
+  border: 5px solid #f3f3f3; /* Light grey */
+  border-top: 5px solid #3498db; /* Blue */
+  border-radius: 50%;
+  animation: spin 1.5s linear infinite;
+  margin: 0 auto;
+  transition: opacity 1s ease-in-out;
+  opacity: 0;
+}
+
+
+#spinner.visible {
+  opacity: 1;
+}
+
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* Sections */
@@ -185,7 +215,7 @@ body {
 /* Textarea */
 .textarea {
   width: 100%;
-  min-height: 120px;
+  min-height: 180px;
   padding: 12px;
   font-size: 0.95rem;
   border: 2px solid #e5e7eb;
@@ -273,6 +303,22 @@ body {
   }
 }
 </style>
+
+  <script>
+    const vueScript = document.getElementById('vue-cdn');
+
+    vueScript.addEventListener('load', () => {
+      console.log('Vue.js CDN loaded and ready');
+      setTimeout(() => {
+        document.querySelector('#spinner').classList.remove('visible');
+        document.querySelector('#app').classList.add('visible');
+      }, 1000);
+    });
+
+    vueScript.addEventListener('error', () => {
+      console.error('Failed to load Vue.js CDN');
+    });
+  </script>
 
   <script type="module">
     var exports = {}

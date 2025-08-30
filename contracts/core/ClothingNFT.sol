@@ -46,6 +46,7 @@ contract ClothingNFT is ERC721 {
 
     // Add history event for a token (callable by ClothesQA)
     function addHistory(uint256 tokenId, bool passed, string calldata details) external {
+        // should only creator be able to modify?
         require(_ownerOf(tokenId) != address(0), "Token does not exist");
         tokenHistory[tokenId].push(HistoryEvent({
             timestamp: block.timestamp,
