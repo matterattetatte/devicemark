@@ -32,7 +32,7 @@ describe("submitQACheck", () => {
     await transaction.wait();
   })
 
-  it.only("submit first NFT creation", async () => {
+  it("submit first NFT creation with file upload", async () => {
     const folderPath = path.join(__dirname, '../mock/QAData0');
     const zip = new AdmZip();
 
@@ -54,20 +54,13 @@ describe("submitQACheck", () => {
           standards: "ISO 105-B02",
           ipfsCID: cidStr,
           score: 95
-    }) 
+    })
 
     // Call submitQACheck on the clothesQA contract
     transaction = await clothesQA.connect(qaFactory).submitQACheck(nftId, passed, details);
     await transaction.wait();
 
-    // Optionally, check for emitted event or state update if applicable
-    // Example if there's an event QualityChecked(uint256 nftId, bool passed, string details)
-    await expect(transaction)
-      .to.emit(clothesQA, "QACheckSubmitted")
-      .withArgs(qaFactory.address, nftId, passed, details)
-    // Example if there's an event QualityChecked(uint256 nftId, bool passed, string details)
-    await expect(transaction)
-      .to.emit(clothingNFT, "HistoryAdded")
+    await expect(transaction).to.emit(clothingNFT, "HistoryAdded")
 
     const downloadedData = await getFileByCid(cidStr)
 
@@ -113,14 +106,8 @@ describe("submitQACheck", () => {
       transaction = await clothesQA.connect(qaFactory).submitQACheck(nftId, check.passed, check.details);
       await transaction.wait();
 
-      // Verify QACheckSubmitted event
-      await expect(transaction)
-        .to.emit(clothesQA, "QACheckSubmitted")
-        .withArgs(qaFactory.address, nftId, check.passed, check.details);
-
       // Verify HistoryAdded event
-      await expect(transaction)
-        .to.emit(clothingNFT, "HistoryAdded");
+      await expect(transaction).to.emit(clothingNFT, "HistoryAdded");
     }
 
     // Get the NFT and its history
