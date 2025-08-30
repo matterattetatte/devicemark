@@ -18,43 +18,261 @@
   </style>
 </head>
 <body>
-  <div id="app">
-    <div class="section">
-      <h2>Wallet Status</h2>
-      <p>{{ account ? `Connected: ${account}` : 'Not connected' }}</p>
-      <button @click="connectWallet">Connect Wallet</button>
-    </div>
-    <div class="section">
-      <h2>Upload QA Data (.zip)</h2>
-      <input type="file" accept=".zip" @change="handleFileChange" />
-    </div>
-    <div class="section">
-      <h2>NFT ID</h2>
-      <input type="number" v-model.number="nftId" min="1" />
-    </div>
-    <div class="section">
-      <h2>QA Check Passed</h2>
-      <input type="checkbox" v-model="passed" />
-    </div>
-    <div class="section">
-      <h2>QA Details</h2>
-      <textarea v-model="details"></textarea>
-    </div>
-    <button @click="submitQACheck" :disabled="!file || !account">Submit QA Check</button>
-    <div class="section">
-      <h2>Status</h2>
-      <p :class="{ error: status.includes('Error'), success: status.includes('Submitted') }">{{ status }}</p>
-      <div v-if="txHash">
-        <p>Transaction: <a :href="txLink" target="_blank">View on Etherscan</a></p>
-        <p>NFT: <a :href="nftLink" target="_blank">View NFT</a></p>
-
-        <button @click="getAllNFTData">Get all data for NFT</button>
-      </div>
-      <code v-if="nftQARead">
-        {{ nftQARead }}
-      </code>
-    </div>  
+<div id="app">
+  <div class="section">
+    <h2>Wallet Status</h2>
+    <p>{{ account ? `Connected: ${account}` : 'Not connected' }}</p>
+    <button @click="connectWallet" class="btn btn-primary">Connect Wallet</button>
   </div>
+  <div class="section">
+    <h2>Upload QA Data (.zip)</h2>
+    <input type="file" accept=".zip" @change="handleFileChange" class="file-input" />
+  </div>
+  <div class="section">
+    <h2>NFT ID</h2>
+    <input type="number" v-model.number="nftId" min="1" class="input-field" />
+  </div>
+  <div class="section">
+    <h2>QA Check Passed</h2>
+    <input type="checkbox" v-model="passed" class="checkbox" />
+  </div>
+  <div class="section">
+    <h2>QA Details</h2>
+    <textarea v-model="details" class="textarea"></textarea>
+  </div>
+  <button @click="submitQACheck" :disabled="!file || !account" class="btn btn-primary" :class="{ 'btn-disabled': !file || !account }">Submit QA Check</button>
+  <div class="section">
+    <h2>Status</h2>
+    <p :class="{ error: status.includes('Error'), success: status.includes('Submitted') }">{{ status }}</p>
+    <div v-if="txHash" class="links">
+      <p>Transaction: <a :href="txLink" target="_blank" class="link">View on Etherscan</a></p>
+      <p>NFT: <a :href="nftLink" target="_blank" class="link">View NFT</a></p>
+      <button @click="getAllNFTData" class="btn btn-secondary">Get all data for NFT</button>
+    </div>
+    <code v-if="nftQARead" class="code-block">
+      {{ nftQARead }}
+    </code>
+  </div>
+</div>
+
+<style>
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #f8fafc;
+  color: #1f2a44;
+  line-height: 1.6;
+  padding: 20px;
+}
+
+/* Container */
+#app {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+}
+
+/* Sections */
+.section {
+  margin-bottom: 28px;
+}
+
+.section h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #164e63;
+  margin-bottom: 12px;
+}
+
+.section p {
+  font-size: 0.95rem;
+  color: #4b5563;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 28px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #164e63;
+  color: #ffffff;
+}
+
+.btn-primary:hover:not(.btn-disabled) {
+  background-color: #0e7490;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary {
+  background-color: #6b7280;
+  color: #ffffff;
+}
+
+.btn-secondary:hover {
+  background-color: #4b5563;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-disabled {
+  background-color: #d1d5db;
+  color: #6b7280;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Inputs */
+.file-input {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  font-size: 0.95rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  background: #ffffff;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.file-input:focus {
+  outline: none;
+  border-color: #164e63;
+  box-shadow: 0 0 0 3px rgba(22, 78, 99, 0.1);
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px;
+  font-size: 0.95rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #164e63;
+  box-shadow: 0 0 0 3px rgba(22, 78, 99, 0.1);
+}
+
+.checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #164e63;
+}
+
+/* Textarea */
+.textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px;
+  font-size: 0.95rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  resize: vertical;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: #164e63;
+  box-shadow: 0 0 0 3px rgba(22, 78, 99, 0.1);
+}
+
+/* Status Messages */
+.success {
+  color: #15803d;
+  font-weight: 500;
+  background: #dcfce7;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.error {
+  color: #b91c1c;
+  font-weight: 500;
+  background: #fee2e2;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+/* Links */
+.links {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.link {
+  color: #164e63;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.link:hover {
+  color: #0e7490;
+  text-decoration: underline;
+}
+
+/* Code Block */
+.code-block {
+  display: block;
+  margin-top: 16px;
+  padding: 16px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9rem;
+  color: #1f2a44;
+  white-space: pre-wrap;
+  overflow-x: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  #app {
+    padding: 16px;
+  }
+
+  .section h2 {
+    font-size: 1.2rem;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+
+  .input-field,
+  .file-input,
+  .textarea {
+    font-size: 0.9rem;
+  }
+}
+</style>
 
   <script type="module">
     var exports = {}
