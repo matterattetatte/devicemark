@@ -1,0 +1,45 @@
+<mxfile host="65bd71144e">
+    <diagram id="E6AwNadN0M9og8GyyUFC" name="Page-1">
+        <mxGraphModel dx="1320" dy="629" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="10" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="2" target="11">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="320" y="200" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="2" value="QA Factory" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="50" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" style="edgeStyle=none;html=1;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="1" source="4" target="2">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Interplanetary Filesystem" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="470" y="60" width="240" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" style="edgeStyle=none;html=1;entryX=0.013;entryY=0.367;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;" edge="1" parent="1" source="2" target="4">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="QA Factory sends raw test output.&lt;div&gt;IPFS returns CID&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="250" y="10" width="180" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="RPC Blockchain server" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="400" y="220" width="320" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="Stores a summary of the tests with CID reference on IPFS" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="200" y="150" width="130" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="NFT (digital tokenized&amp;nbsp; representation of physical product) is created/updated with new test data thanks to a smart contract. Any data that has been added to the NFT is immutable and available 24/h7." style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="660" y="190" width="280" height="230" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="Has a private/public key pair to be able to make writes/inserts to the blockchain" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry y="80" width="110" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="Business case:&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;1. The smart contract requires 1 USDC stablecoin as payment by the QA factory wallet. The QA factory wallet must in that case receive a top up&lt;/div&gt;&lt;div&gt;2. There are costs to writing and keeping data on IPFS. The blockchain costs are the gas fees when doing a write to the blockchain. Sonic chain is a cheap and fast layer 1 chain. It is one of the chains the US government is using to publish economic data. There might be cheaper alternatives to IPFS, such as Walrus and Filecoin.&lt;/div&gt;&lt;div&gt;3. When someone wants to by the physical product online, there should be a link to&amp;nbsp; the blockchain, ex:&lt;br&gt;&lt;br&gt;https://testnet.sonicscan.org/nft/0x02a3ead7c544e8c17159b579d1eea62ef5a51ecf/10&lt;/div&gt;&lt;div&gt;and&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;https://testnet.sonicscan.org/token/0x02a3ead7c544e8c17159b579d1eea62ef5a51ecf#readContract#F3&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Basically, we would need to make the QA factory pay enough to cover the expenses of writing data to IPFS and the blockchain. Other costs for paperwork and other boring stuff also needs to be taken into account.&lt;/div&gt;" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+                    <mxGeometry x="20" y="350" width="590" height="590" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
