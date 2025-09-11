@@ -2,6 +2,6 @@
 pragma solidity ^0.8.20;
 
 interface IDeviceNFT {
-    function ownerOf(uint256 tokenId) external view returns (address);
-    function mint(address to, uint256 tokenId) external;
+    function ownerOf(uint64 imei) external view returns (address);
+    function mint(address to, uint64 imei) external;
 }

@@ -18,5 +18,5 @@ interface IDevicesQA {
 
     function registerQAFactory(address factoryAddress, string calldata name, string calldata certificationNumber) external;
     function unRegisterQAFactory() external;
-    function submitQACheck(uint256 nftId, bool passed, string calldata details) external;
+    function submitQACheck(uint64 imei, bool passed, string calldata details) external;
 }
