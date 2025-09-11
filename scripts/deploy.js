@@ -20,16 +20,16 @@ async function main() {
   await plnc.waitForDeployment()
   const plncAddress = await plnc.getAddress()
 
-  const ClothingNFT = await ethers.getContractFactory("ClothingNFT");
-  const clothingNFT = await ClothingNFT.deploy(); // Assumes clothingNFT has no constructor args; adjust if needed
-  await clothingNFT.waitForDeployment();
-  const clothingNFTAddress = await clothingNFT.getAddress()
+  const DeviceNFT = await ethers.getContractFactory("DeviceNFT");
+  const deviceNFT = await DeviceNFT.deploy(); // Assumes deviceNFT has no constructor args; adjust if needed
+  await deviceT.waitForDeployment();
+  const deviceTAddress = await dedevicegetAddress()
 
-  const ClothesQA = await hre.ethers.getContractFactory("ClothesQA")
-  const clothesQA = await ClothesQA.deploy(plncAddress, clothingNFTAddress)
-  await clothesQA.waitForDeployment()
+  const DevicesQA = await hre.ethers.getContractFactory("DevicesQA")
+  const DevicesQA = await DevicesQA.deploy(plncAddress, deviceTAddress)
+  await devicesQA.waitForDeployment()
 
-  const address = await clothesQA.getAddress()
+  const address = await devicesQA.getAddress()
 
   console.log('Deployer:', deployer.address)
   console.log(`Deployed Clothes Contract at: ${address}\n`)
@@ -55,7 +55,7 @@ async function main() {
 
     const qaFactorySigner = qaFactorySigners[index];
 
-    const transaction = await clothesQA.connect(deployer).registerQAFactory(qaFactorySigner.address, qaFactory.name, qaFactory.certificationNumber);
+    const transaction = await devicesQA.connect(deployer).registerQAFactory(qaFactorySigner.address, qaFactory.name, qaFactory.certificationNumber);
     await transaction.wait();
     console.log(`Registered QA Factory: ${qaFactory.name} with license ${qaFactory.certificationNumber}`);
   }
@@ -80,10 +80,10 @@ async function main() {
 
     // }
 
-  writeFileSync('./frontend/.env', `CLOTHESQA_CONTRACT_ADDRESS=${address}\nPLNC_CONTRACT_ADDRESS=${plncAddress}\nCLOTHING_NFT_CONTRACT_ADDRESS=${clothingNFTAddress}`, { flag: 'w' })
+  writeFileSync('./frontend/.env', `DevicesQA_CONTRACT_ADDRESS=${address}\nPLNC_CONTRACT_ADDRESS=${plncAddress}\nCLOTHING_NFT_CONTRACT_ADDRESS=${deviceTAddress}`, { flag: 'w' })
 
   await hre.run("verify:verify", {
-    address: clothingNFTAddress,
+    address: deviceTAddress,
     constructorArguments: [],
   });
 }

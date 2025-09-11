@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 import "../interfaces/INFTContract.sol";
 
-contract ClothingNFT is ERC721 {
+contract DeviceNFT is ERC721 {
     uint256 private _tokenIdCounter; // Simple counter for token IDs
 
     // Struct to store history events
@@ -21,11 +21,11 @@ contract ClothingNFT is ERC721 {
     // Event for history updates
     event HistoryAdded(uint256 indexed tokenId, uint256 timestamp);
 
-    constructor() ERC721("ClothingNFT", "CNFT") {
+    constructor() ERC721("DeviceNFT", "CNFT") {
         _tokenIdCounter = 1; // Start token IDs at 1
     }
 
-    // Mint a new NFT (callable by ClothesQA)
+    // Mint a new NFT (callable by DevicesQA)
     function mint(address to, uint256 tokenId) external {
         require(to != address(0), "Cannot mint to zero address");
         require(_ownerOf(tokenId) == address(0), "Token ID already exists");
@@ -44,7 +44,7 @@ contract ClothingNFT is ERC721 {
         return tokenId;
     }
 
-    // Add history event for a token (callable by ClothesQA)
+    // Add history event for a token (callable by DevicesQA)
     function addHistory(uint256 tokenId, bool passed, string calldata details) external {
         // should only creator be able to modify?
         require(_ownerOf(tokenId) != address(0), "Token does not exist");

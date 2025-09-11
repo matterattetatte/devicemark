@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-interface IClothesQA {
+interface IDevicesQA {
     // Events
     event FactoryRegistered(address indexed factory, string name, string certificationNumber);
     event FactoryUnregistered(address indexed factory);

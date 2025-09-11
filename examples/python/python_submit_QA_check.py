@@ -58,14 +58,14 @@ if not w3.is_connected():
 qa_factory = Account.from_key('YOUR_PRIVATE_KEY')  # Replace with your private key
 
 # Load contract ABI and address (replace with your deployed contract details)
-# Example: clothesQA_abi = [...] (load from JSON file or deployment artifact)
-clothesQA_address = 'YOUR_CLOTHESQA_CONTRACT_ADDRESS'  # Replace with your contract address
-clothingNFT_address = 'YOUR_CLOTHINGNFT_CONTRACT_ADDRESS'  # Replace with your NFT contract address
-clothesQA = w3.eth.contract(address=clothesQA_address, abi=clothesQA_abi)
-clothingNFT = w3.eth.contract(address=clothingNFT_address, abi=clothingNFT_abi)
+# Example: DevicesQA_abi = [...] (load from JSON file or deployment artifact)
+DevicesQA_address = 'YOUR_DevicesQA_CONTRACT_ADDRESS'  # Replace with your contract address
+deviceNFT_address = 'YOUR_CLOTHINGNFT_CONTRACT_ADDRESS'  # Replace with your NFT contract address
+DevicesQA = w3.eth.contract(address=DevicesQA_address, abi=DevicesQA_abi)
+deviceNFT = w3.eth.contract(address=deviceNFT_address, abi=deviceNFT_abi)
 
-# Submit QA check to clothesQA contract
-transaction = clothesQA.functions.submitQACheck(nft_id, passed, details).build_transaction({
+# Submit QA check to DevicesQA contract
+transaction = DevicesQA.functions.submitQACheck(nft_id, passed, details).build_transaction({
     'from': qa_factory.address,
     'nonce': w3.eth.get_transaction_count(qa_factory.address),
     'gas': 2000000,  # Sonic has low gas fees; adjust if needed
@@ -80,7 +80,7 @@ txn_receipt = w3.eth.wait_for_transaction_receipt(txn_hash)
 
 # Check for emitted HistoryAdded event
 event_found = False
-for event in clothingNFT.events.HistoryAdded().process_receipt(txn_receipt):
+for event in deviceNFT.events.HistoryAdded().process_receipt(txn_receipt):
     event_found = True
     break
 assert event_found, "HistoryAdded event was not emitted"

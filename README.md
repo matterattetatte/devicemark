@@ -1,4 +1,4 @@
-# ClothesQA
+# DevicesQA
 
 This code allows QA Factories to upload QA test data to decentralized immutable networks.
 

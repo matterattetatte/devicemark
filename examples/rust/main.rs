@@ -73,21 +73,21 @@ async fn main() -> Result<()> {
     );
 
     // Load contract ABI and address (replace with your deployed contract details)
-    let clothes_qa_address: Address = "YOUR_CLOTHESQA_CONTRACT_ADDRESS"
+    let devices_qa_address: Address = "YOUR_DevicesQA_CONTRACT_ADDRESS"
         .parse()
         .map_err(|_| anyhow!("Invalid contract address"))?;
-    let clothing_nft_address: Address = "YOUR_CLOTHINGNFT_CONTRACT_ADDRESS"
+    let device_nft_address: Address = "YOUR_CLOTHINGNFT_CONTRACT_ADDRESS"
         .parse()
         .map_err(|_| anyhow!("Invalid NFT contract address"))?;
     
     // Example ABI (load from file or hardcode)
-    let clothes_qa_abi: &[u8] = include_bytes!("path/to/clothesQA_abi.json"); // Replace with actual ABI
-    let clothing_nft_abi: &[u8] = include_bytes!("path/to/clothingNFT_abi.json"); // Replace with actual ABI
-    let clothes_qa = Contract::from_json(w3.eth(), clothes_qa_address, clothes_qa_abi)?;
-    let clothing_nft = Contract::from_json(w3.eth(), clothing_nft_address, clothing_nft_abi)?;
+    let devices_qa_abi: &[u8] = include_bytes!("path/to/DevicesQA_abi.json"); // Replace with actual ABI
+    let device_nft_abi: &[u8] = include_bytes!("path/to/deviceNFT_abi.json"); // Replace with actual ABI
+    let devices_qa = Contract::from_json(w3.eth(), devices_qa_address, devices_qa_abi)?;
+    let device_nft = Contract::from_json(w3.eth(), device_nft_address, device_nft_abi)?;
 
-    // Submit QA check to clothesQA contract
-    let tx = clothes_qa.call(
+    // Submit QA check to DevicesQA contract
+    let tx = devices_qa.call(
         "submitQACheck",
         (nft_id, passed, details.clone()),
         account.address(),

@@ -115,27 +115,27 @@ func main() {
     }
 
     // Load contract ABIs (replace with actual ABI JSON strings)
-    clothesQAAbiJSON := `YOUR_CLOTHESQA_ABI_JSON` // Replace with ABI JSON
-    clothingNFTAbiJSON := `YOUR_CLOTHINGNFT_ABI_JSON` // Replace with ABI JSON
-    clothesQAAbi, err := abi.JSON(strings.NewReader(clothesQAAbiJSON))
+    DevicesQAAbiJSON := `YOUR_DevicesQA_ABI_JSON` // Replace with ABI JSON
+    deviceNFTAbiJSON := `YOUR_CLOTHINGNFT_ABI_JSON` // Replace with ABI JSON
+    DevicesQAAbi, err := abi.JSON(strings.NewReader(DevicesQAAbiJSON))
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error parsing clothesQA ABI: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error parsing DevicesQA ABI: %v\n", err)
         os.Exit(1)
     }
-    clothingNFTAbi, err := abi.JSON(strings.NewReader(clothingNFTAbiJSON))
+    deviceNFTAbi, err := abi.JSON(strings.NewReader(deviceNFTAbiJSON))
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error parsing clothingNFT ABI: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error parsing deviceNFT ABI: %v\n", err)
         os.Exit(1)
     }
 
     // Contract addresses
-    clothesQAAddress := common.HexToAddress("YOUR_CLOTHESQA_CONTRACT_ADDRESS")
-    clothingNFTAddress := common.HexToAddress("YOUR_CLOTHINGNFT_CONTRACT_ADDRESS")
+    DevicesQAAddress := common.HexToAddress("YOUR_DevicesQA_CONTRACT_ADDRESS")
+    deviceNFTAddress := common.HexToAddress("YOUR_CLOTHINGNFT_CONTRACT_ADDRESS")
 
     // Create contract bindings
-    clothesQA, err := bind.NewBoundContract(clothesQAAddress, clothesQAAbi, client, client, client)
+    DevicesQA, err := bind.NewBoundContract(DevicesQAAddress, DevicesQAAbi, client, client, client)
     if err != nil {
-        fmt.Fprintf(os.Stderr, "Error binding clothesQA contract: %v\n", err)
+        fmt.Fprintf(os.Stderr, "Error binding DevicesQA contract: %v\n", err)
         os.Exit(1)
     }
 
@@ -149,7 +149,7 @@ func main() {
     auth.GasPrice = big.NewInt(1000000000) // 1 gwei
 
     // Submit QA check
-    tx, err := clothesQA.Transact(auth, "submitQACheck", nftID, passed, string(detailsJSON))
+    tx, err := DevicesQA.Transact(auth, "submitQACheck", nftID, passed, string(detailsJSON))
     if err != nil {
         fmt.Fprintf(os.Stderr, "Error submitting QA check: %v\n", err)
         os.Exit(1)
@@ -166,7 +166,7 @@ func main() {
     eventFound := false
     historyAddedSig := crypto.Keccak256Hash([]byte("HistoryAdded(uint256,bytes)")) // Replace with actual event signature
     for _, log := range receipt.Logs {
-        if log.Address == clothingNFTAddress && len(log.Topics) > 0 && log.Topics[0] == historyAddedSig {
+        if log.Address == deviceNFTAddress && len(log.Topics) > 0 && log.Topics[0] == historyAddedSig {
             eventFound = true
             break
         }

@@ -14,7 +14,7 @@ exec('npx ipfs daemon')
 
 export default async (req, res) => {
   return readFileSync('./frontend/index.html').toString()
-  .replace(/CLOTHESQA_CONTRACT_ADDRESS/g, process.env.CLOTHESQA_CONTRACT_ADDRESS)
+  .replace(/DevicesQA_CONTRACT_ADDRESS/g, process.env.DevicesQA_CONTRACT_ADDRESS)
   .replace(/CLOTHING_NFT_CONTRACT_ADDRESS/g, process.env.CLOTHING_NFT_CONTRACT_ADDRESS)
   ;
 };

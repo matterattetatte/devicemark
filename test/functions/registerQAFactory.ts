@@ -1,15 +1,15 @@
 import { expect } from "chai"
 import { ethers } from "hardhat"
-import { tokens } from "./ClothesQA"
+import { tokens } from "./DevicesQA"
 
 describe("registerQAFactory", () => {
-  let deployer, clothesQA, qaFactory, transaction;
+  let deployer, DevicesQA, qaFactory, transaction;
   beforeEach(() => {
-    ;[{ deployer, clothesQA, qaFactory }]  = [global as any]
+    ;[{ deployer, devicesQA, qaFactory }]  = [global as any]
   })
 
   it("gets empty QA factory profile", async () => {
-    const profile = await clothesQA.getFactory(qaFactory.address);
+    const profile = await devicesQA.getFactory(qaFactory.address);
 
     expect(profile.name).to.equal("");
     expect(profile.certificationNumber).to.equal("");
@@ -21,14 +21,14 @@ describe("registerQAFactory", () => {
       certificationNumber: "QA12345",
     };
 
-    transaction = await clothesQA.connect(deployer).registerQAFactory(qaFactory.address, profile.name, profile.certificationNumber);
+    transaction = await devicesQA.connect(deployer).registerQAFactory(qaFactory.address, profile.name, profile.certificationNumber);
     await transaction.wait();
 
-    const allFactories = await clothesQA.getQAFactoriesList();
+    const allFactories = await devicesQA.getQAFactoriesList();
     expect(allFactories.length).to.equal(1);
     expect(allFactories[0]).to.equal(qaFactory.address);
 
-    const factoryProfile = await clothesQA.getFactory(qaFactory.address);
+    const factoryProfile = await devicesQA.getFactory(qaFactory.address);
     expect(factoryProfile.name).to.equal(profile.name);
     expect(factoryProfile.certificationNumber).to.equal(profile.certificationNumber);
   });

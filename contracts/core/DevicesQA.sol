@@ -3,14 +3,14 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import "../interfaces/IClothesQA.sol";
-import "./ClothingNFT.sol";
+import "../interfaces/IDevicesQA.sol";
+import "./DeviceNFT.sol";
 import "../mock/PLNC.sol";
 
-contract ClothesQA is IClothesQA, Ownable {
+contract DevicesQA is IDevicesQA, Ownable {
     // State variables
     PLNC public immutable plncToken; // PLNC token contract
-    ClothingNFT public immutable clothingNFT; // PLNC token contract
+    DeviceNFT public immutable deviceNFT; // PLNC token contract
     address[] public allowedFactories; // Array of allowed QA factory addresses
     mapping(address => Factory) public factories; // Mapping of factory details
 
@@ -27,10 +27,10 @@ contract ClothesQA is IClothesQA, Ownable {
         _;
     }
 
-    constructor(PLNC _plncToken, ClothingNFT _nftContract) Ownable(msg.sender) {
+    constructor(PLNC _plncToken, DeviceNFT _nftContract) Ownable(msg.sender) {
         if (address(_plncToken) == address(0) || address(_nftContract) == address(0)) revert ZeroAddress();
         plncToken = _plncToken;
-        clothingNFT = _nftContract;
+        deviceNFT = _nftContract;
     }
 
     // Check if an address is an allowed factory
@@ -76,14 +76,14 @@ contract ClothesQA is IClothesQA, Ownable {
     // TODO: 1. we require 4 pln to be sent in order to process this qa thingy
     function submitQACheck(uint256 nftId, bool passed, string calldata details) external override onlyAllowed {
         // Verify NFT exists and is owned by someone
-        try clothingNFT.ownerOf(nftId) returns (address owner) {
+        try deviceNFT.ownerOf(nftId) returns (address owner) {
             if (owner == address(0)) revert InvalidNFT();
         } catch {
             // If NFT doesn't exist, mint a new one to the factory (assumed workflow)
-            clothingNFT.mint(msg.sender, nftId);
+            deviceNFT.mint(msg.sender, nftId);
         }
 
-        clothingNFT.addHistory(nftId, passed, details);
+        deviceNFT.addHistory(nftId, passed, details);
     }
 
     function getQAFactoriesList() external view returns (address[] memory) {

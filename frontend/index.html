@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ClothesQA NFT Submission</title>
+  <title>DevicesQA NFT Submission</title>
   <script defer id="vue-cdn" src="https://unpkg.com/vue@3.4.38/dist/vue.global.js"></script>
   <script defer src="https://unpkg.com/ipfs-http-client@60.0.0/dist/index.min.js"></script>
   <style>
@@ -385,8 +385,8 @@ body {
           });
 
           console.log('wallet client', this.walletClient)
-          // ClothesQA contract ABI
-          const clothesQAABI = [
+          // DevicesQA contract ABI
+          const DevicesQAABI = [
             {
               name: 'submitQACheck',
               type: 'function',
@@ -449,7 +449,7 @@ body {
             },
           ];
 
-          this.contract = { address: 'CLOTHESQA_CONTRACT_ADDRESS', abi: clothesQAABI, chainId: sonicTestnet.id };
+          this.contract = { address: 'DevicesQA_CONTRACT_ADDRESS', abi: DevicesQAABI, chainId: sonicTestnet.id };
         } else {
           this.status = "Error: Please install MetaMask";
         }
@@ -554,7 +554,7 @@ body {
                           "type": "string"
                         }
                       ],
-                      "internalType": "struct ClothingNFT.HistoryEvent[]",
+                      "internalType": "struct DeviceNFT.HistoryEvent[]",
                       "name": "",
                       "type": "tuple[]"
                     }

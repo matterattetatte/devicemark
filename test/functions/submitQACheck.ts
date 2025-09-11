@@ -3,7 +3,7 @@ import { expect } from "chai"
 import path from 'path';
 import AdmZip from 'adm-zip';
 
-import { tokens } from "./ClothesQA"
+import { tokens } from "./DevicesQA"
 
 async function getFileByCid(cid) {
   try {
@@ -19,16 +19,16 @@ async function getFileByCid(cid) {
 }
 
 describe("submitQACheck", () => {
-  let deployer, clothesQA, clothingNFT, qaFactory, transaction;
+  let deployer, devicesQA, deviceNFT, qaFactory, transaction;
   beforeEach(async () => {
-    ;[{ deployer, clothesQA, clothingNFT, qaFactory }] = [global as any]
+    ;[{ deployer, devicesQA, deviceNFT, qaFactory }] = [global as any]
 
     const profile = {
       name: "QualityCorp",
       certificationNumber: "QA12345",
     };
 
-    transaction = await clothesQA.connect(deployer).registerQAFactory(qaFactory.address, profile.name, profile.certificationNumber);
+    transaction = await devicesQA.connect(deployer).registerQAFactory(qaFactory.address, profile.name, profile.certificationNumber);
     await transaction.wait();
   })
 
@@ -56,11 +56,11 @@ describe("submitQACheck", () => {
           score: 95
     })
 
-    // Call submitQACheck on the clothesQA contract
-    transaction = await clothesQA.connect(qaFactory).submitQACheck(nftId, passed, details);
+    // Call submitQACheck on the devicesQA contract
+    transaction = await devicesQA.connect(qaFactory).submitQACheck(nftId, passed, details);
     await transaction.wait();
 
-    await expect(transaction).to.emit(clothingNFT, "HistoryAdded")
+    await expect(transaction).to.emit(deviceNFT, "HistoryAdded")
 
     const downloadedData = await getFileByCid(cidStr)
 
@@ -103,16 +103,16 @@ describe("submitQACheck", () => {
 
     // Submit multiple QA checks sequentially
     for (const check of qaChecks) {
-      transaction = await clothesQA.connect(qaFactory).submitQACheck(nftId, check.passed, check.details);
+      transaction = await devicesQA.connect(qaFactory).submitQACheck(nftId, check.passed, check.details);
       await transaction.wait();
 
       // Verify HistoryAdded event
-      await expect(transaction).to.emit(clothingNFT, "HistoryAdded");
+      await expect(transaction).to.emit(deviceNFT, "HistoryAdded");
     }
 
     // Get the NFT and its history
-    const nftHistory = await clothingNFT.getHistory(nftId);
-    const nftOwner = await clothingNFT.ownerOf(nftId);
+    const nftHistory = await deviceNFT.getHistory(nftId);
+    const nftOwner = await deviceNFT.ownerOf(nftId);
 
     // Verify the history length matches the number of QA checks
     expect(nftHistory.length).to.equal(qaChecks.length);

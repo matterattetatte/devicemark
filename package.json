@@ -1,10 +1,10 @@
 {
-  "name": "clothes-qa",
+  "name": "devices-qa",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "hh:test:debug": "node --inspect-brk node_modules/.bin/hardhat test test/ClothesQA.ts",
-    "hh:test": "hardhat test test/ClothesQA.ts",
+    "hh:test:debug": "node --inspect-brk node_modules/.bin/hardhat test test/DevicesQA.ts",
+    "hh:test": "hardhat test test/DevicesQA.ts",
     "deploy:sonic": "hardhat compile && hardhat run scripts/deploy.js --network sonic",
     "demo": "micro rundemo.js",
     "node:local": "hardhat node --port 8545",

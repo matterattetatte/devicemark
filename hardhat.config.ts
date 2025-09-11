@@ -7,7 +7,6 @@ import '@typechain/hardhat'
 import '@nomicfoundation/hardhat-ethers'
 import '@nomicfoundation/hardhat-chai-matchers'
 
-
 /** @type import('hardhat/config').HardhatUserConfig */
 
 export default {
@@ -15,7 +14,7 @@ export default {
   networks: {
     sonic: {
       url: "https://rpc.testnet.soniclabs.com",
-       accounts: [process.env.SONIC_PRIVATE_KEY]
+      accounts: [process.env.SONIC_PRIVATE_KEY, '0x48effaaa4c487766911c853f986fd101edb09ddabaae38a3be45533a13859b52', '0x48effaaa4c487766911c853f986fd101edb09ddabaae38a3be45533a13859b52']
     },
     localhost: {
       url: "http://127.0.0.1:8545",

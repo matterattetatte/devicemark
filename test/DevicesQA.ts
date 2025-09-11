@@ -46,7 +46,7 @@ async function isIpfsDaemonUp(once?: boolean) {
   throw new Error('IPFS daemon did not start within the expected time.');
 }
 
-describe("ClothesQA", () => {
+describe("DevicesQA", () => {
   let plnc
 
   before(async () => {
@@ -75,13 +75,13 @@ describe("ClothesQA", () => {
     const PLNC = await ethers.getContractFactory("PLNC");
     plnc = await PLNC.deploy(global.deployer); // Assumes PLNC has no constructor args; adjust if needed
 
-    const ClothingNFT = await ethers.getContractFactory("ClothingNFT");
-    global.clothingNFT = await ClothingNFT.deploy(); // Assumes clothingNFT has no constructor args; adjust if needed
+    const DeviceNFT = await ethers.getContractFactory("DeviceNFT");
+    global.deviceNFT = await DeviceNFT.deploy(); // Assumes deviceNFT has no constructor args; adjust if needed
 
-    const ClothesQA = await ethers.getContractFactory("ClothesQA");
+    const DevicesQA = await ethers.getContractFactory("DevicesQA");
 
-    global.clothesQA = await ClothesQA.deploy(plnc.getAddress(), global.clothingNFT.getAddress());
-    await global.clothesQA.waitForDeployment()
+    global.devicesQA = await DevicesQA.deploy(plnc.getAddress(), global.deviceNFT.getAddress());
+    await global.devicesQA.waitForDeployment()
   });
 
   after(async () => {
