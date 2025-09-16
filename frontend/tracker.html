@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevicesQA NFT Tracker</title>
+  <script defer id="vue-cdn" src="https://unpkg.com/vue@3.4.38/dist/vue.global.js"></script>
+  <script defer src="https://unpkg.com/ipfs-http-client@60.0.0/dist/index.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px;
+      margin-top: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+    }
+
+    .status {
+      color: #333;
+    }
+
+    .error {
+      color: red;
+    }
+
+    .success {
+      color: green;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="visible" id="spinner"></div>
+  <div id="app">
+    ello
+  </div>
+
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f8fafc;
+      color: #1f2a44;
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    /* Container */
+    #app {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 24px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+      transition: opacity 1s ease-in-out;
+      opacity: 0;
+    }
+
+    #app.visible {
+      opacity: 1;
+    }
+
+    #spinner {
+      position: relative;
+      width: 30px;
+      height: 30px;
+      border: 5px solid #f3f3f3;
+      /* Light grey */
+      border-top: 5px solid #3498db;
+      /* Blue */
+      border-radius: 50%;
+      animation: spin 1.5s linear infinite;
+      margin: 0 auto;
+      transition: opacity 1s ease-in-out;
+      opacity: 0;
+    }
+
+
+    #spinner.visible {
+      opacity: 1;
+    }
+
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Sections */
+    .section {
+      margin-bottom: 28px;
+    }
+
+    .section h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #164e63;
+      margin-bottom: 12px;
+    }
+
+    .section p {
+      font-size: 0.95rem;
+      color: #4b5563;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 28px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background-color: #164e63;
+      color: #ffffff;
+    }
+
+    .btn-primary:hover:not(.btn-disabled) {
+      background-color: #0e7490;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-secondary {
+      background-color: #6b7280;
+      color: #ffffff;
+    }
+
+    .btn-secondary:hover {
+      background-color: #4b5563;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-disabled {
+      background-color: #d1d5db;
+      color: #6b7280;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Inputs */
+    .file-input {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      font-size: 0.95rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      background: #ffffff;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .file-input:focus {
+      outline: none;
+      border-color: #164e63;
+      box-shadow: 0 0 0 3px rgba(22, 78, 99, 0.1);
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 12px;
+      font-size: 0.95rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: #164e63;
+      box-shadow: 0 0 0 3px rgba(22, 78, 99, 0.1);
+    }
+
+    .checkbox {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #164e63;
+    }
+
+    /* Textarea */
+    .textarea {
+      width: 100%;
+      min-height: 180px;
+      padding: 12px;
+      font-size: 0.95rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      resize: vertical;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .textarea:focus {
+      outline: none;
+      border-color: #164e63;
+      box-shadow: 0 0 0 3px rgba(22, 78, 99, 0.1);
+    }
+
+    /* Status Messages */
+    .success {
+      color: #15803d;
+      font-weight: 500;
+      background: #dcfce7;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+
+    .error {
+      color: #b91c1c;
+      font-weight: 500;
+      background: #fee2e2;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+
+    /* Links */
+    .links {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .link {
+      color: #164e63;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .link:hover {
+      color: #0e7490;
+      text-decoration: underline;
+    }
+
+    /* Code Block */
+    .code-block {
+      display: block;
+      margin-top: 16px;
+      padding: 16px;
+      background: #f1f5f9;
+      border-radius: 10px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+      color: #1f2a44;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      #app {
+        padding: 16px;
+      }
+
+      .section h2 {
+        font-size: 1.2rem;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+      }
+
+      .input-field,
+      .file-input,
+      .textarea {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+
+
+  <script>
+    const vueScript = document.getElementById('vue-cdn');
+
+    vueScript.addEventListener('load', () => {
+      console.log('Vue.js CDN loaded and ready');
+      setTimeout(() => {
+        document.querySelector('#spinner').classList.remove('visible');
+        document.querySelector('#app').classList.add('visible');
+      }, 1000);
+    });
+
+    vueScript.addEventListener('error', () => {
+      console.error('Failed to load Vue.js CDN');
+    });
+  </script>
+
+
+  <script type="module">
+    var exports = {}
+    const { createApp } = Vue
+  import { createPublicClient, createWalletClient, http, custom } from 'https://esm.sh/viem';
+  import { sonicTestnet } from 'https://esm.sh/viem/chains';
+    // import { createPublicClient, createWalletClient, http, custom } from 'viem';
+    // import { sonicTestnet } from 'viem/chains';
+
+    sonicTestnet.id = 14601; // Override for Sonic Testnet
+
+    createApp({
+      data() {
+        return {
+        };
+      },
+      async created() {
+      },
+      methods: {
+        async getAllNFTData() {
+           const data = await this.publicClient.readContract({
+              address: 'CLOTHING_NFT_CONTRACT_ADDRESS', 
+              abi: [
+                {
+                  "inputs": [
+                    {
+                      "internalType": "uint256",
+                      "name": "deviceId",
+                      "type": "uint256"
+                    }
+                  ],
+                  "name": "getHistory",
+                  "outputs": [
+                    {
+                      "components": [
+                        {
+                          "internalType": "uint256",
+                          "name": "timestamp",
+                          "type": "uint256"
+                        },
+                        {
+                          "internalType": "bool",
+                          "name": "passed",
+                          "type": "bool"
+                        },
+                        {
+                          "internalType": "string",
+                          "name": "details",
+                          "type": "string"
+                        }
+                      ],
+                      "internalType": "struct DeviceNFT.HistoryEvent[]",
+                      "name": "",
+                      "type": "tuple[]"
+                    }
+                  ],
+                  "stateMutability": "view",
+                  "type": "function"
+                },
+              ],
+              functionName: 'getHistory',
+              args: [BigInt(this.nftId)]
+            });
+
+
+            data.forEach((item) => {
+              const parsedDetails = JSON.parse(item.details)
+              item.details = {
+                details: parsedDetails,
+                ipfsDataUrl: `http://localhost:8080/ipfs/${parsedDetails.ipfsCID}`,
+              },
+              item.timestamp = item.timestamp.toString()
+            })
+
+            this.nftQARead = JSON.stringify(data, null, 4)
+        }
+      },
+    }).mount("#app");
+
+  </script>
+</body>
+
+</html>

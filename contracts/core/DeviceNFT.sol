@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "../interfaces/INFTContract.sol";
 
 contract DeviceNFT is ERC721 {
-    uint64 private _imeiCounter; // Simple counter for token IDs
+    uint64 private _deviceIdCounter; // Simple counter for token IDs
 
     // Struct to store history events
     struct HistoryEvent {
@@ -15,51 +15,51 @@ contract DeviceNFT is ERC721 {
         string details;
     }
 
-    // Mapping of imei to array of history events
+    // Mapping of deviceId to array of history events
     mapping(uint256 => HistoryEvent[]) public tokenHistory;
 
     // Event for history updates
-    event HistoryAdded(uint256 indexed imei, uint256 timestamp);
+    event HistoryAdded(uint256 indexed deviceId, uint256 timestamp);
 
     constructor() ERC721("DeviceNFT", "CNFT") {
-        _imeiCounter = 1; // Start token IDs at 1
+        _deviceIdCounter = 1; // Start token IDs at 1
     }
 
     // Mint a new NFT (callable by DevicesQA)
-    function mint(address to, uint64 imei) external {
+    function mint(address to, uint64 deviceId) external {
         require(to != address(0), "Cannot mint to zero address");
-        require(_ownerOf(imei) == address(0), "Token ID already exists");
-        _mint(to, imei);
+        require(_ownerOf(deviceId) == address(0), "Token ID already exists");
+        _mint(to, deviceId);
 
-        emit HistoryAdded(imei, block.timestamp);
+        emit HistoryAdded(deviceId, block.timestamp);
     }
 
     // Mint with auto-incrementing ID
     function mintAutoId(address to) external returns (uint256) {
         require(to != address(0), "Cannot mint to zero address");
-        uint64 imei = _imeiCounter;
-        _mint(to, imei);
-        _imeiCounter++;
+        uint64 deviceId = _deviceIdCounter;
+        _mint(to, deviceId);
+        _deviceIdCounter++;
 
-        return imei;
+        return deviceId;
     }
 
     // Add history event for a token (callable by DevicesQA)
-    function addHistory(uint64 imei, bool passed, string calldata details) external {
+    function addHistory(uint64 deviceId, bool passed, string calldata details) external {
         // should only creator be able to modify?
-        require(_ownerOf(imei) != address(0), "Token does not exist");
-        tokenHistory[imei].push(HistoryEvent({
+        require(_ownerOf(deviceId) != address(0), "Token does not exist");
+        tokenHistory[deviceId].push(HistoryEvent({
             timestamp: block.timestamp,
             passed: passed,
             details: details
         }));
-        emit HistoryAdded(imei, block.timestamp);
+        emit HistoryAdded(deviceId, block.timestamp);
     }
 
     // Get history for a token
-    function getHistory(uint64 imei) external view returns (HistoryEvent[] memory) {
-        require(_ownerOf(imei) != address(0), "Token does not exist");
-        return tokenHistory[imei];
+    function getHistory(uint64 deviceId) external view returns (HistoryEvent[] memory) {
+        require(_ownerOf(deviceId) != address(0), "Token does not exist");
+        return tokenHistory[deviceId];
     }
 
     // Helper function to convert address to string

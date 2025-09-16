@@ -7,6 +7,7 @@
     "hh:test": "hardhat test test/DevicesQA.ts",
     "deploy:sonic": "hardhat compile && hardhat run scripts/deploy.js --network sonic",
     "demo": "micro rundemo.js",
+    "demo:dev": "nodemon --watch ./frontend -e html,js,css --exec \"micro rundemo.js\"",
     "node:local": "hardhat node --port 8545",
     "deploy:local": "hardhat compile && hardhat run scripts/deploy.js --network localhost",
     "symlink:plnc": "mkdir -p frontend/src/abis && ln -sf \"$PWD/artifacts/contracts/mock/PLNC.sol/PLNC.json\" frontend/src/abis/PLNC.json && ln -sf \"$PWD/artifacts/contracts/mock/PLNC.sol/PLNC.dbg.json\" frontend/src/abis/PLNC.db.json"
@@ -20,13 +21,15 @@
     "@types/chai": "^4.3.20",
     "@types/serve-handler": "^6.1.4",
     "dotenv": "^17.2.1",
-    "hardhat": "^2.25.0"
+    "hardhat": "^2.25.0",
+    "nodemon": "^3.1.10"
   },
   "dependencies": {
     "adm-zip": "^0.5.16",
     "date-fns-tz": "^3.2.0",
     "ipfs-http-client": "^56.0.2",
     "micro": "^10.0.1",
+    "micro-dev": "^3.1.0",
     "open": "^10.2.0"
   }
 }

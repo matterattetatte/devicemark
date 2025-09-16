@@ -22,15 +22,15 @@
   <div class="section">
     <h2>Wallet Status</h2>
     <p>{{ account ? `Connected: ${account}` : 'Not connected' }}</p>
-    <button @click="connectWallet" class="btn btn-primary">Connect Wallet</button>
+    <button v-if="!account" @click="connectWallet" class="btn btn-primary">{{ 'Connect Wallet' }}</button>
   </div>
   <div class="section">
-    <h2>Upload QA Data (.zip)</h2>
+    <h2>Upload Test Protocol (.zip)</h2>
     <input type="file" accept=".zip" @change="handleFileChange" class="file-input" />
   </div>
   <div class="section">
-    <h2>NFT ID</h2>
-    <input type="number" v-model.number="nftId" min="1" class="input-field" />
+    <h2>IMEI</h2>
+    <input type="number" v-model.number="deviceId" min="1" class="input-field" />
   </div>
   <div class="section">
     <h2>QA Check Passed</h2>
@@ -46,7 +46,7 @@
     <p :class="{ error: status.includes('Error'), success: status.includes('Submitted') }">{{ status }}</p>
     <div v-if="txHash" class="links">
       <p>Transaction: <a :href="txLink" target="_blank" class="link">View in blockchain explorer</a></p>
-      <p>NFT: <a :href="nftLink" target="_blank" class="link">View NFT</a></p>
+      <p>IMEI: <a :href="nftLink" target="_blank" class="link">View NFT</a></p>
       <button @click="getAllNFTData" class="btn btn-secondary">Get all data for NFT</button>
     </div>
     <code v-if="nftQARead" class="code-block">
@@ -336,7 +336,7 @@ body {
           provider: null,
           contract: null,
           file: null,
-          nftId: 1,
+          deviceId: 1,
           passed: true,
           details: JSON.stringify(
             {
@@ -386,12 +386,12 @@ body {
 
           console.log('wallet client', this.walletClient)
           // DevicesQA contract ABI
-          const DevicesQAABI = [
+          const devicesQAABI = [
             {
               name: 'submitQACheck',
               type: 'function',
               inputs: [
-                { name: 'nftId', type: 'uint256' },
+                { name: 'deviceId', type: 'int64' },
                 { name: 'passed', type: 'bool' },
                 { name: 'details', type: 'string' }
               ],
@@ -401,9 +401,9 @@ body {
             {
               "inputs": [
                 {
-                  "internalType": "uint256",
-                  "name": "nftId",
-                  "type": "uint256"
+                  "internalType": "int64",
+                  "name": "deviceId",
+                  "type": "int64"
                 }
               ],
               "name": "getQACheck",
@@ -424,9 +424,9 @@ body {
                   "type": "string"
                 },
                 {
-                  "internalType": "uint256",
+                  "internalType": "int64",
                   "name": "timestamp",
-                  "type": "uint256"
+                  "type": "int64"
                 }
               ],
               "stateMutability": "view",
@@ -437,7 +437,7 @@ body {
               type: 'event',
               inputs: [
                 { name: 'submitter', type: 'address', indexed: true },
-                { name: 'nftId', type: 'uint256', indexed: true },
+                { name: 'deviceId', type: 'int64', indexed: true },
                 { name: 'passed', type: 'bool', indexed: false },
                 { name: 'details', type: 'string', indexed: false }
               ]
@@ -449,7 +449,7 @@ body {
             },
           ];
 
-          this.contract = { address: 'DevicesQA_CONTRACT_ADDRESS', abi: DevicesQAABI, chainId: sonicTestnet.id };
+          this.contract = { address: 'DevicesQA_CONTRACT_ADDRESS', abi: devicesQAABI, chainId: sonicTestnet.id };
         } else {
           this.status = "Error: Please install MetaMask";
         }
@@ -500,23 +500,23 @@ body {
               address: this.contract.address,
               abi: this.contract.abi,
               functionName: 'submitQACheck',
-              args: [BigInt(this.nftId), this.passed, detailsStr],
+              args: [BigInt(this.deviceId), this.passed, detailsStr],
               account: this.account,
             });
             const hash = await this.walletClient.writeContract({
               ...this.contract,
               functionName: 'submitQACheck',
-              args: [BigInt(this.nftId), this.passed, detailsStr],
+              args: [BigInt(this.deviceId), this.passed, detailsStr],
               account: this.account,
               gas: estimatedGas || BigInt(300000),
             });
 
             const receipt = await this.publicClient.waitForTransactionReceipt({ hash });
-            this.status = `Submitted QA check for NFT ID ${this.nftId} with CID: ${cidStr}`;
+            this.status = `Submitted QA check for NFT ID ${this.deviceId} with CID: ${cidStr}`;
             this.txHash = receipt.transactionHash;
 
             this.txLink = `https://testnet.sonicscan.org/tx/${this.txHash}`;
-            this.nftLink = `https://testnet.sonicscan.org/address/CLOTHING_NFT_CONTRACT_ADDRESS?a=${this.nftId}`;
+            this.nftLink = `https://testnet.sonicscan.org/address/CLOTHING_NFT_CONTRACT_ADDRESS?a=${this.deviceId}`;
           } catch (error) {
             console.log(error)
             this.status = "Error: " + error.message;
@@ -529,9 +529,9 @@ body {
                 {
                   "inputs": [
                     {
-                      "internalType": "uint256",
-                      "name": "imei",
-                      "type": "uint256"
+                      "internalType": "int64",
+                      "name": "deviceId",
+                      "type": "int64"
                     }
                   ],
                   "name": "getHistory",
@@ -539,9 +539,9 @@ body {
                     {
                       "components": [
                         {
-                          "internalType": "uint256",
+                          "internalType": "int64",
                           "name": "timestamp",
-                          "type": "uint256"
+                          "type": "int64"
                         },
                         {
                           "internalType": "bool",
@@ -564,7 +564,7 @@ body {
                 },
               ],
               functionName: 'getHistory',
-              args: [BigInt(this.nftId)]
+              args: [BigInt(this.deviceId)]
             });
 
 
