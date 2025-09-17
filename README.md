@@ -37,3 +37,15 @@ By Monday:
 - En enkel eBay-mock (white label) på produktsidan. Ska se likadan ut, men en grön ikon som är klickbar som navigerar i ny flik till lookupen...
 - Snygg lookup (se postnord-tracking), som hämtar och visar blockchain-data
 - Filuppladdning (extrahera data i tabellformat: Pass/fail, faultcodes int[], grade string). Behöver inte se super ut.
+
+
+
+## Color palette
+
+| Purpose / Region                             | Hex         | Approx RGB      |
+| -------------------------------------------- | ----------- | --------------- |
+| Deep Blue background (badge)                 | **#152a5a** | (21, 42, 90)    |
+| Bright Cyan / Teal accent (glow / text)      | **#00c8d2** | (0, 200, 210)   |
+| Orange-Yellow glow / burst                   | **#ff9c00** | (255, 156, 0)   |
+| Near-white / light for text / highlights     | **#f0f8ff** | (240, 248, 255) |
+| Darker shade for contrast (shadow / borders) | **#0c1a3d** | (12, 26, 61)    |
