@@ -1,6 +1,6 @@
 export default {
   template: `
-    <div>
+    <div style="border: 2px solid black">
       <div v-if="collapsed">
         <button class="btn btn-secondary" @click="toggleCollapse">
           <span :style="{ background: eventTypeColor }">{{ item.eventType || 'TEST' }}</span> Show Details
