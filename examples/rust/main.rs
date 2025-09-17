@@ -76,7 +76,7 @@ async fn main() -> Result<()> {
     let devices_qa_address: Address = "YOUR_DevicesQA_CONTRACT_ADDRESS"
         .parse()
         .map_err(|_| anyhow!("Invalid contract address"))?;
-    let device_nft_address: Address = "YOUR_CLOTHINGNFT_CONTRACT_ADDRESS"
+    let device_nft_address: Address = "YOUR_DEVICENFT_CONTRACT_ADDRESS"
         .parse()
         .map_err(|_| anyhow!("Invalid NFT contract address"))?;
     

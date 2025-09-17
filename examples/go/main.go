@@ -116,7 +116,7 @@ func main() {
 
     // Load contract ABIs (replace with actual ABI JSON strings)
     DevicesQAAbiJSON := `YOUR_DevicesQA_ABI_JSON` // Replace with ABI JSON
-    deviceNFTAbiJSON := `YOUR_CLOTHINGNFT_ABI_JSON` // Replace with ABI JSON
+    deviceNFTAbiJSON := `YOUR_DEVICENFT_ABI_JSON` // Replace with ABI JSON
     DevicesQAAbi, err := abi.JSON(strings.NewReader(DevicesQAAbiJSON))
     if err != nil {
         fmt.Fprintf(os.Stderr, "Error parsing DevicesQA ABI: %v\n", err)
@@ -130,7 +130,7 @@ func main() {
 
     // Contract addresses
     DevicesQAAddress := common.HexToAddress("YOUR_DevicesQA_CONTRACT_ADDRESS")
-    deviceNFTAddress := common.HexToAddress("YOUR_CLOTHINGNFT_CONTRACT_ADDRESS")
+    deviceNFTAddress := common.HexToAddress("YOUR_DEVICENFT_CONTRACT_ADDRESS")
 
     // Create contract bindings
     DevicesQA, err := bind.NewBoundContract(DevicesQAAddress, DevicesQAAbi, client, client, client)

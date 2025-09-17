@@ -14,10 +14,14 @@ exec('npx ipfs daemon')
 
 export default async (req, res) => {
   console.log('Incoming request: ' + req.url);
+
+  // NEW BACKEND ROUTE THAT ACTS AS PROXY TO FETCH DATA FROM ETHERSCAN!!
+  
+
   if (req.url.includes('tracker')) {
     return readFileSync('./frontend/tracker.html').toString()
     .replace(/DevicesQA_CONTRACT_ADDRESS/g, process.env.DevicesQA_CONTRACT_ADDRESS)
-    .replace(/CLOTHING_NFT_CONTRACT_ADDRESS/g, process.env.CLOTHING_NFT_CONTRACT_ADDRESS)
+    .replace(/DEVICE_NFT_CONTRACT_ADDRESS/g, process.env.DEVICE_NFT_CONTRACT_ADDRESS)
     ;
   } else if (req.url.includes('favicon.ico')) {
     res.setHeader('Content-Type', 'image/x-icon');
@@ -25,7 +29,7 @@ export default async (req, res) => {
   } else {
     return readFileSync('./frontend/index.html').toString()
     .replace(/DevicesQA_CONTRACT_ADDRESS/g, process.env.DevicesQA_CONTRACT_ADDRESS)
-    .replace(/CLOTHING_NFT_CONTRACT_ADDRESS/g, process.env.CLOTHING_NFT_CONTRACT_ADDRESS)
+    .replace(/DEVICE_NFT_CONTRACT_ADDRESS/g, process.env.DEVICE_NFT_CONTRACT_ADDRESS)
     ;
   }
 };

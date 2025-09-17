@@ -27,3 +27,13 @@ This code allows QA Factories to upload QA test data to decentralized immutable 
 
 ### 6. Start demo
 `$ npm run demo`
+
+
+
+### TODOS
+By Monday:
+
+
+- En enkel eBay-mock (white label) på produktsidan. Ska se likadan ut, men en grön ikon som är klickbar som navigerar i ny flik till lookupen...
+- Snygg lookup (se postnord-tracking), som hämtar och visar blockchain-data
+- Filuppladdning (extrahera data i tabellformat: Pass/fail, faultcodes int[], grade string). Behöver inte se super ut.

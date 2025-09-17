@@ -516,7 +516,7 @@ body {
             this.txHash = receipt.transactionHash;
 
             this.txLink = `https://testnet.sonicscan.org/tx/${this.txHash}`;
-            this.nftLink = `https://testnet.sonicscan.org/address/CLOTHING_NFT_CONTRACT_ADDRESS?a=${this.deviceId}`;
+            this.nftLink = `https://testnet.sonicscan.org/address/DEVICE_NFT_CONTRACT_ADDRESS?a=${this.deviceId}`;
           } catch (error) {
             console.log(error)
             this.status = "Error: " + error.message;
@@ -524,7 +524,7 @@ body {
         },
         async getAllNFTData() {
            const data = await this.publicClient.readContract({
-              address: 'CLOTHING_NFT_CONTRACT_ADDRESS', 
+              address: 'DEVICE_NFT_CONTRACT_ADDRESS', 
               abi: [
                 {
                   "inputs": [
