@@ -73,7 +73,7 @@ async fn main() -> Result<()> {
     );
 
     // Load contract ABI and address (replace with your deployed contract details)
-    let devices_qa_address: Address = "YOUR_DevicesQA_CONTRACT_ADDRESS"
+    let devices_qa_address: Address = "YOUR_DEVICESQA_CONTRACT_ADDRESS"
         .parse()
         .map_err(|_| anyhow!("Invalid contract address"))?;
     let device_nft_address: Address = "YOUR_DEVICENFT_CONTRACT_ADDRESS"

@@ -129,7 +129,7 @@ func main() {
     }
 
     // Contract addresses
-    DevicesQAAddress := common.HexToAddress("YOUR_DevicesQA_CONTRACT_ADDRESS")
+    DevicesQAAddress := common.HexToAddress("YOUR_DEVICESQA_CONTRACT_ADDRESS")
     deviceNFTAddress := common.HexToAddress("YOUR_DEVICENFT_CONTRACT_ADDRESS")
 
     // Create contract bindings

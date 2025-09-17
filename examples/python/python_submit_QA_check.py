@@ -59,7 +59,7 @@ qa_factory = Account.from_key('YOUR_PRIVATE_KEY')  # Replace with your private k
 
 # Load contract ABI and address (replace with your deployed contract details)
 # Example: DevicesQA_abi = [...] (load from JSON file or deployment artifact)
-DevicesQA_address = 'YOUR_DevicesQA_CONTRACT_ADDRESS'  # Replace with your contract address
+DevicesQA_address = 'YOUR_DEVICESQA_CONTRACT_ADDRESS'  # Replace with your contract address
 deviceNFT_address = 'YOUR_DEVICENFT_CONTRACT_ADDRESS'  # Replace with your NFT contract address
 DevicesQA = w3.eth.contract(address=DevicesQA_address, abi=DevicesQA_abi)
 deviceNFT = w3.eth.contract(address=deviceNFT_address, abi=deviceNFT_abi)

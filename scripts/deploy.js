@@ -80,7 +80,7 @@ async function main() {
 
     // }
 
-  writeFileSync('./frontend/.env', `DevicesQA_CONTRACT_ADDRESS=${address}\nPLNC_CONTRACT_ADDRESS=${plncAddress}\nCLOTHING_NFT_CONTRACT_ADDRESS=${deviceTAddress}`, { flag: 'w' })
+  writeFileSync('./frontend/.env', `DEVICESQA_CONTRACT_ADDRESS=${address}\nPLNC_CONTRACT_ADDRESS=${plncAddress}\nDEVICE_NFT_CONTRACT_ADDRESS=${deviceTAddress}`, { flag: 'w' })
 
   await hre.run("verify:verify", {
     address: deviceTAddress,

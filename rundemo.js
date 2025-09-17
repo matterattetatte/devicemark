@@ -18,9 +18,13 @@ export default async (req, res) => {
   // NEW BACKEND ROUTE THAT ACTS AS PROXY TO FETCH DATA FROM ETHERSCAN!!
   
 
-  if (req.url.includes('tracker')) {
+  if (req.url.includes('/components/')) {
+    // Failed to load module script: Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of "". Strict MIME type checking is enforced for module scripts per HTML spec.
+    res.setHeader('Content-Type', 'application/javascript');
+    return readFileSync(`./frontend/${req.url}`).toString()
+  } else if (req.url.includes('tracker')) {
     return readFileSync('./frontend/tracker.html').toString()
-    .replace(/DevicesQA_CONTRACT_ADDRESS/g, process.env.DevicesQA_CONTRACT_ADDRESS)
+    .replace(/DEVICESQA_CONTRACT_ADDRESS/g, process.env.DEVICESQA_CONTRACT_ADDRESS)
     .replace(/DEVICE_NFT_CONTRACT_ADDRESS/g, process.env.DEVICE_NFT_CONTRACT_ADDRESS)
     ;
   } else if (req.url.includes('favicon.ico')) {
@@ -28,7 +32,7 @@ export default async (req, res) => {
     return readFileSync('./frontend/favicon.jpg');
   } else {
     return readFileSync('./frontend/index.html').toString()
-    .replace(/DevicesQA_CONTRACT_ADDRESS/g, process.env.DevicesQA_CONTRACT_ADDRESS)
+    .replace(/DEVICESQA_CONTRACT_ADDRESS/g, process.env.DEVICESQA_CONTRACT_ADDRESS)
     .replace(/DEVICE_NFT_CONTRACT_ADDRESS/g, process.env.DEVICE_NFT_CONTRACT_ADDRESS)
     ;
   }

@@ -46,7 +46,14 @@
 <body>
   <div class="visible" id="spinner"></div>
   <div id="app">
-    ello
+    <h1>Tracking Device ID: {{ deviceId }}</h1>
+    <div style="display:flex; justify-content:center; margin:20px 0;">
+    <img alt="Barcode Generator TEC-IT" :src="`https://barcode.tec-it.com/barcode.ashx?data=${deviceId}&code=Code128&eclevel=L`" />
+    </div>
+    <code>
+      {{ nftQARead }}
+    </code>
+    <history-item v-for="(item, index) in nftQARead" :key="index" :item="item"></history-item>
   </div>
 
   <style>
@@ -328,17 +335,31 @@
     const { createApp } = Vue
   import { createPublicClient, createWalletClient, http, custom } from 'https://esm.sh/viem';
   import { sonicTestnet } from 'https://esm.sh/viem/chains';
+
+  import HistoryItem from './components/HistoryItem.js';
+
     // import { createPublicClient, createWalletClient, http, custom } from 'viem';
     // import { sonicTestnet } from 'viem/chains';
 
     sonicTestnet.id = 14601; // Override for Sonic Testnet
 
     createApp({
+      components: {
+        HistoryItem
+      },
       data() {
         return {
+          nftQARead: this.nftQARead,
         };
       },
       async created() {
+        const params = new URLSearchParams(window.location.search);
+        this.deviceId = params.get('deviceId');
+        this.publicClient = createPublicClient({
+          chain: sonicTestnet,
+          transport: http(),
+        });
+        this.getAllNFTData()
       },
       methods: {
         async getAllNFTData() {
@@ -383,7 +404,7 @@
                 },
               ],
               functionName: 'getHistory',
-              args: [BigInt(this.nftId)]
+              args: [BigInt(this.deviceId)]
             });
 
 
@@ -396,7 +417,7 @@
               item.timestamp = item.timestamp.toString()
             })
 
-            this.nftQARead = JSON.stringify(data, null, 4)
+            this.nftQARead = data
         }
       },
     }).mount("#app");
