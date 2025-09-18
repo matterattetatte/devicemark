@@ -12,14 +12,15 @@ contract DeviceNFT is ERC721 {
     struct HistoryEvent {
         uint256 timestamp;
         bool passed;
-        string details;
+        string[] faultCodes;
+        string date;
     }
 
     // Mapping of deviceId to array of history events
     mapping(uint256 => HistoryEvent[]) public tokenHistory;
 
     // Event for history updates
-    event HistoryAdded(uint256 indexed deviceId, uint256 timestamp);
+    event HistoryAdded(uint256 indexed deviceId, string timestamp);
 
     constructor() ERC721("DeviceNFT", "CNFT") {
         _deviceIdCounter = 1; // Start token IDs at 1
@@ -30,30 +31,20 @@ contract DeviceNFT is ERC721 {
         require(to != address(0), "Cannot mint to zero address");
         require(_ownerOf(deviceId) == address(0), "Token ID already exists");
         _mint(to, deviceId);
-
-        emit HistoryAdded(deviceId, block.timestamp);
-    }
-
-    // Mint with auto-incrementing ID
-    function mintAutoId(address to) external returns (uint256) {
-        require(to != address(0), "Cannot mint to zero address");
-        uint64 deviceId = _deviceIdCounter;
-        _mint(to, deviceId);
-        _deviceIdCounter++;
-
-        return deviceId;
     }
 
     // Add history event for a token (callable by DevicesQA)
-    function addHistory(uint64 deviceId, bool passed, string calldata details) external {
+    function addHistory(uint64 deviceId, bool passed, string[] calldata faultCodes, string calldata date) external {
         // should only creator be able to modify?
         require(_ownerOf(deviceId) != address(0), "Token does not exist");
+
         tokenHistory[deviceId].push(HistoryEvent({
             timestamp: block.timestamp,
             passed: passed,
-            details: details
+            faultCodes: faultCodes,
+            date: date
         }));
-        emit HistoryAdded(deviceId, block.timestamp);
+        emit HistoryAdded(deviceId, date);
     }
 
     // Get history for a token

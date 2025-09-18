@@ -525,22 +525,21 @@ body {
             // Update details with CID
             const detailsObj = JSON.parse(this.details);
             detailsObj.ipfsCID = cidStr;
-            const detailsStr = JSON.stringify(detailsObj);
 
-            // Submit to contract
-            this.status = "Submitting to blockchain...";
-            const estimatedGas = await this.publicClient.estimateContractGas({
+            const data = {
               address: this.contract.address,
               abi: this.contract.abi,
               functionName: 'submitQACheck',
-              args: [BigInt(this.deviceId), this.passed, detailsStr],
+              args: [BigInt(this.parsedPDFData.IMEI), this.parsedPDFData.passed, this.parsedPDFData.faultCodes, this.parsedPDFData.date],
               account: this.account,
-            });
+            }
+
+            this.status = "Submitting to blockchain...";
+
+            const estimatedGas = await this.publicClient.estimateContractGas(data);
             const hash = await this.walletClient.writeContract({
               ...this.contract,
-              functionName: 'submitQACheck',
-              args: [BigInt(this.deviceId), this.passed, detailsStr],
-              account: this.account,
+              ...data,
               gas: estimatedGas || BigInt(300000),
             });
 

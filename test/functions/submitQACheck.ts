@@ -45,65 +45,44 @@ describe("submitQACheck", () => {
     const cidStr = cid.toString();
     console.log(`Uploaded to IPFS with CID: ${cidStr}`);
 
-    const nftId = 1; // example NFT id
-    const passed = true; // example check result
-    const details = JSON.stringify({
-          testType: "color_fastness",
-          result: "No fading observed",
-          testDate: "2025-08-20",
-          standards: "ISO 105-B02",
-          ipfsCID: cidStr,
-          score: 95
-    })
+  const nftId = 1; // example NFT id
+  const passed = true; // example check result
+  const faultCodes = ["FC001", "FC002"];
+  const date = "2025-08-20";
 
-    // Call submitQACheck on the devicesQA contract
-    transaction = await devicesQA.connect(qaFactory).submitQACheck(nftId, passed, details);
-    await transaction.wait();
+  // Call submitQACheck on the devicesQA contract
+  transaction = await devicesQA.connect(qaFactory).submitQACheck(nftId, passed, faultCodes, date);
+  await transaction.wait();
 
-    await expect(transaction).to.emit(deviceNFT, "HistoryAdded")
+  await expect(transaction).to.emit(deviceNFT, "HistoryAdded")
 
-    const downloadedData = await getFileByCid(cidStr)
+  const downloadedData = await getFileByCid(cidStr)
 
-    expect(downloadedData).to.equal(zipData.toString())
+  expect(downloadedData).to.equal(zipData.toString())
   });
   it("should submit multiple sequential QA checks and verify NFT history", async () => {
     const nftId = 1; // example NFT id
     const qaChecks = [
       { 
         passed: true, 
-        details: JSON.stringify({
-          testType: "color_fastness",
-          result: "No fading observed",
-          testDate: "2025-08-20",
-          standards: "ISO 105-B02",
-          score: 95
-        }) 
+        faultCodes: ["FC001", "FC002"],
+        date: "2025-08-20"
       },
       { 
         passed: true, 
-        details: JSON.stringify({
-          testType: "material_durability",
-          result: "High tensile strength",
-          testDate: "2025-08-21",
-          standards: "ASTM D5034",
-          score: 92
-        }) 
+        faultCodes: ["FC003"],
+        date: "2025-08-21"
       },
       { 
         passed: false, 
-        details: JSON.stringify({
-          testType: "stitching_quality",
-          result: "Inconsistent stitch length",
-          testDate: "2025-08-22",
-          standards: "ISO 4915",
-          score: 65
-        }) 
+        faultCodes: ["FC004", "FC005"],
+        date: "2025-08-22"
       },
     ];
 
     // Submit multiple QA checks sequentially
     for (const check of qaChecks) {
-      transaction = await devicesQA.connect(qaFactory).submitQACheck(nftId, check.passed, check.details);
+      transaction = await devicesQA.connect(qaFactory).submitQACheck(nftId, check.passed, check.faultCodes, check.date);
       await transaction.wait();
 
       // Verify HistoryAdded event
@@ -121,7 +100,8 @@ describe("submitQACheck", () => {
     // Verify each history entry
     qaChecks.forEach((check, index) => {
       expect(nftHistory[index].passed).to.equal(check.passed);
-      expect(nftHistory[index].details).to.equal(check.details);
+      expect(nftHistory[index].faultCodes).to.deep.equal(check.faultCodes);
+      expect(nftHistory[index].date).to.equal(check.date);
     });
   });
 });
