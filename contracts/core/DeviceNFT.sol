@@ -10,10 +10,11 @@ contract DeviceNFT is ERC721 {
 
     // Struct to store history events
     struct HistoryEvent {
-        uint256 timestamp;
-        bool passed;
-        string[] faultCodes;
-        string date;
+    uint256 timestamp;
+    bool passed;
+    string[] faultCodes;
+    string date;
+    string ipfsCID;
     }
 
     // Mapping of deviceId to array of history events
@@ -34,15 +35,16 @@ contract DeviceNFT is ERC721 {
     }
 
     // Add history event for a token (callable by DevicesQA)
-    function addHistory(uint64 deviceId, bool passed, string[] calldata faultCodes, string calldata date) external {
-        // should only creator be able to modify?
-        require(_ownerOf(deviceId) != address(0), "Token does not exist");
+    function addHistory(uint64 deviceId, bool passed, string[] calldata faultCodes, string calldata date, string calldata ipfsCID) external {
+    // should only creator be able to modify?
+    require(_ownerOf(deviceId) != address(0), "Token does not exist");
 
         tokenHistory[deviceId].push(HistoryEvent({
             timestamp: block.timestamp,
             passed: passed,
             faultCodes: faultCodes,
-            date: date
+            date: date,
+            ipfsCID: ipfsCID
         }));
         emit HistoryAdded(deviceId, date);
     }

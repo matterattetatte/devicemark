@@ -74,7 +74,8 @@ contract DevicesQA is IDevicesQA, Ownable {
     // maybe allowance?? what about pectra approval stuff?
     // Submit a QA check for an NFT
     // TODO: 1. we require 4 pln to be sent in order to process this qa thingy
-    function submitQACheck(uint64 deviceId, bool passed, string[] calldata faultCodes, string calldata date) external onlyAllowed {
+    // ipfsCID
+    function submitQACheck(uint64 deviceId, bool passed, string[] calldata faultCodes, string calldata date, string calldata ipfsCID) external onlyAllowed {
         // Verify NFT exists and is owned by someone
         try deviceNFT.ownerOf(deviceId) returns (address owner) {
             if (owner == address(0)) revert InvalidNFT();
@@ -83,7 +84,7 @@ contract DevicesQA is IDevicesQA, Ownable {
             deviceNFT.mint(msg.sender, deviceId);
         }
 
-        deviceNFT.addHistory(deviceId, passed, faultCodes, date);
+        deviceNFT.addHistory(deviceId, passed, faultCodes, date, ipfsCID);
     }
 
     function getQAFactoriesList() external view returns (address[] memory) {

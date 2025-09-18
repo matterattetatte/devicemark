@@ -51,7 +51,7 @@ describe("submitQACheck", () => {
   const date = "2025-08-20";
 
   // Call submitQACheck on the devicesQA contract
-  transaction = await devicesQA.connect(qaFactory).submitQACheck(nftId, passed, faultCodes, date);
+  transaction = await devicesQA.connect(qaFactory).submitQACheck(nftId, passed, faultCodes, date, cidStr);
   await transaction.wait();
 
   await expect(transaction).to.emit(deviceNFT, "HistoryAdded")
@@ -66,23 +66,26 @@ describe("submitQACheck", () => {
       { 
         passed: true, 
         faultCodes: ["FC001", "FC002"],
-        date: "2025-08-20"
+        date: "2025-08-20",
+        ipfsCID: "bafybeih"
       },
       { 
         passed: true, 
         faultCodes: ["FC003"],
-        date: "2025-08-21"
+        date: "2025-08-21",
+        ipfsCID: "bafybeih2"
       },
       { 
         passed: false, 
         faultCodes: ["FC004", "FC005"],
-        date: "2025-08-22"
+        date: "2025-08-22",
+        ipfsCID: "bafybeih5"
       },
     ];
 
     // Submit multiple QA checks sequentially
     for (const check of qaChecks) {
-      transaction = await devicesQA.connect(qaFactory).submitQACheck(nftId, check.passed, check.faultCodes, check.date);
+      transaction = await devicesQA.connect(qaFactory).submitQACheck(nftId, check.passed, check.faultCodes, check.date, check.ipfsCID);
       await transaction.wait();
 
       // Verify HistoryAdded event
@@ -102,6 +105,7 @@ describe("submitQACheck", () => {
       expect(nftHistory[index].passed).to.equal(check.passed);
       expect(nftHistory[index].faultCodes).to.deep.equal(check.faultCodes);
       expect(nftHistory[index].date).to.equal(check.date);
+      expect(nftHistory[index].ipfsCID).to.equal(check.ipfsCID);
     });
   });
 });

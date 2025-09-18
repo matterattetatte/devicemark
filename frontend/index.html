@@ -522,15 +522,11 @@ body {
             const cidStr = cid.toString();
             this.status = `Uploaded to IPFS with CID: ${cidStr}`;
 
-            // Update details with CID
-            const detailsObj = JSON.parse(this.details);
-            detailsObj.ipfsCID = cidStr;
-
             const data = {
               address: this.contract.address,
               abi: this.contract.abi,
               functionName: 'submitQACheck',
-              args: [BigInt(this.parsedPDFData.IMEI), this.parsedPDFData.passed, this.parsedPDFData.faultCodes, this.parsedPDFData.date],
+              args: [BigInt(this.parsedPDFData.IMEI), this.parsedPDFData.passed, this.parsedPDFData.faultCodes, this.parsedPDFData.date, ipfsCID],
               account: this.account,
             }
 

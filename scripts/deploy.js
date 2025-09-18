@@ -22,11 +22,11 @@ async function main() {
 
   const DeviceNFT = await ethers.getContractFactory("DeviceNFT");
   const deviceNFT = await DeviceNFT.deploy(); // Assumes deviceNFT has no constructor args; adjust if needed
-  await deviceT.waitForDeployment();
-  const deviceTAddress = await dedevicegetAddress()
+  await deviceNFT.waitForDeployment();
+  const deviceNFTAddress = await deviceNFT.getAddress()
 
   const DevicesQA = await hre.ethers.getContractFactory("DevicesQA")
-  const DevicesQA = await DevicesQA.deploy(plncAddress, deviceTAddress)
+  const devicesQA = await DevicesQA.deploy(plncAddress, deviceNFTAddress)
   await devicesQA.waitForDeployment()
 
   const address = await devicesQA.getAddress()
@@ -80,12 +80,12 @@ async function main() {
 
     // }
 
-  writeFileSync('./frontend/.env', `DEVICESQA_CONTRACT_ADDRESS=${address}\nPLNC_CONTRACT_ADDRESS=${plncAddress}\nDEVICE_NFT_CONTRACT_ADDRESS=${deviceTAddress}`, { flag: 'w' })
+  writeFileSync('./frontend/.env', `DEVICESQA_CONTRACT_ADDRESS=${address}\nPLNC_CONTRACT_ADDRESS=${plncAddress}\nDEVICE_NFT_CONTRACT_ADDRESS=${deviceNFTAddress}`, { flag: 'w' })
 
-  await hre.run("verify:verify", {
-    address: deviceTAddress,
-    constructorArguments: [],
-  });
+  // await hre.run("verify:verify", {
+  //   address: deviceNFTAddress,
+  //   constructorArguments: [],
+  // });
 }
 
 // We recommend this pattern to be able to use async/await everywhere
