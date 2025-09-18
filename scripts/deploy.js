@@ -25,6 +25,8 @@ async function main() {
   await deviceNFT.waitForDeployment();
   const deviceNFTAddress = await deviceNFT.getAddress()
 
+  console.log('NFT contract deployed to:', deviceNFTAddress);
+
   const DevicesQA = await hre.ethers.getContractFactory("DevicesQA")
   const devicesQA = await DevicesQA.deploy(plncAddress, deviceNFTAddress)
   await devicesQA.waitForDeployment()
@@ -32,8 +34,8 @@ async function main() {
   const address = await devicesQA.getAddress()
 
   console.log('Deployer:', deployer.address)
-  console.log(`Deployed Clothes Contract at: ${address}\n`)
-  console.log(`Check out out in the Sonic Explorer: https://testnet.sonicscan.org/address/${address}\n`)
+  console.log(`Deployed QA Contract at: ${address}\n`)
+  console.log(`Check out in the Sonic Explorer: https://testnet.sonicscan.org/address/${address}\n`)
   console.log(`Update the .env file in ../frontend with the new contract address\n`)
 
   console.log('Now, registering some random qaFactories...')

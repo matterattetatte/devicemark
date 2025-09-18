@@ -16,9 +16,9 @@ export default {
       url: "https://rpc.testnet.soniclabs.com",
       accounts: [process.env.SONIC_PRIVATE_KEY, '0x48effaaa4c487766911c853f986fd101edb09ddabaae38a3be45533a13859b52', '0x48effaaa4c487766911c853f986fd101edb09ddabaae38a3be45533a13859b52']
     },
-    localhost: {
-      url: "http://127.0.0.1:8545",
-      chainId: 31337,
+   localhost: {
+      chainId: 14601,
+      url: "http://localhost:8545"
     }
   },
   etherscan: {
