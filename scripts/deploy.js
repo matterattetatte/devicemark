@@ -59,7 +59,7 @@ async function main() {
 
     const transaction = await devicesQA.connect(deployer).registerQAFactory(qaFactorySigner.address, qaFactory.name, qaFactory.certificationNumber);
     await transaction.wait();
-    console.log(`Registered QA Factory: ${qaFactory.name} with license ${qaFactory.certificationNumber}`);
+    console.log(`Registered QA Factory: ${qaFactory.name} with license ${qaFactory.certificationNumber}, address: ${qaFactorySigner.address}`);
   }
 
   // now, fund some stablecoins to 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 if 
@@ -84,9 +84,14 @@ async function main() {
 
   writeFileSync('./frontend/.env', `DEVICESQA_CONTRACT_ADDRESS=${address}\nPLNC_CONTRACT_ADDRESS=${plncAddress}\nDEVICE_NFT_CONTRACT_ADDRESS=${deviceNFTAddress}`, { flag: 'w' })
 
+  await hre.run("verify:verify", {
+    address: deviceNFTAddress,
+    constructorArguments: [],
+  });
+
   // await hre.run("verify:verify", {
-  //   address: deviceNFTAddress,
-  //   constructorArguments: [],
+  //   address: address,
+  //   constructorArguments: [plncAddress, deviceNFTAddress],
   // });
 }
 

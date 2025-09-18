@@ -9,7 +9,30 @@
   <script defer src="https://unpkg.com/ipfs-http-client@60.0.0/dist/index.min.js"></script>
   <style>
 
+@keyframes pump {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.live-indicator {
+  color: #4ade80;
+  font-size: 40px;
+  position: relative;
+  bottom: -5px;
+  display: inline-block; /* Prevents layout issues */
+  animation: pump 1.5s ease-in-out infinite;
+}
     .badge {
+      margin: 0 auto;
         width: 110px;
         display: flex;
         flex-direction: column;
@@ -42,12 +65,12 @@
     <div style="display:flex; justify-content:center; margin:20px 0;">
       <img alt="Barcode Generator TEC-IT" :src="`https://barcode.tec-it.com/barcode.ashx?data=${deviceId}&code=Code128&eclevel=L`" />
     </div>
-    <code>
-      {{ nftQARead }}
-    </code>
     <center class="badge">
       <span class="badge-text">DeviceMark<span style="font-size: 7px;padding-bottom: 20px;">®</span> Verified</span>
     </center>
+    <div>
+      <p style="text-align:center; font-weight:600; margin-top:16px;"><span class="live-indicator">●</span> Last Fetched from Blockchain: {{ new Date(lastFetched).toLocaleString() }}</p>
+    </div>
     <div class="timeline">
       <div v-for="(item, index) in nftQARead" :key="index" style="position:relative;">
         <history-item :item="item"></history-item>
@@ -300,10 +323,10 @@
 
     .timeline-connector {
       position: absolute;
-      left: 8px;
-      top: 0;
-      bottom: 0;
+      left: 50%;
+      bottom: -40px;
       width: 2px;
+      height: 50px;
       background: linear-gradient(to bottom, #4ade80, #f43f5e);
     }
 
@@ -339,7 +362,7 @@
       setTimeout(() => {
         document.querySelector('#spinner').classList.remove('visible');
         document.querySelector('#app').classList.add('visible');
-      }, 1000);
+      }, 3000);
     });
 
     vueScript.addEventListener('error', () => {
@@ -379,6 +402,7 @@
       },
       methods: {
 async getAllNFTData() {
+          try {
            const data = await this.publicClient.readContract({
               address: 'DEVICE_NFT_CONTRACT_ADDRESS', 
               abi: [{
@@ -428,7 +452,7 @@ async getAllNFTData() {
                 "type": "function"
               }],
               functionName: 'getHistory',
-              args: [BigInt(this.parsedPDFData.IMEI)]
+              args: [BigInt(this.deviceId)]
             });
 
 
@@ -438,6 +462,16 @@ async getAllNFTData() {
             })
 
             this.nftQARead = data
+            this.lastFetched = Date.now()
+
+
+          } catch (error) {
+            alert('Cannot find data for IMEI ID: ' + this.deviceId);
+            return
+          }
+            setTimeout(() => {
+              this.getAllNFTData()
+            }, 10000)
         }
       },
     }).mount("#app");

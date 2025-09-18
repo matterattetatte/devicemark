@@ -320,7 +320,7 @@ body {
       setTimeout(() => {
         document.querySelector('#spinner').classList.remove('visible');
         document.querySelector('#app').classList.add('visible');
-      }, 1000);
+      }, 3000);
     });
 
     vueScript.addEventListener('error', () => {
@@ -387,15 +387,16 @@ const hardhatLocal = defineChain({
                 window.location.href = '/'
               } else {
                 console.log('🔑 Wallet connected/changed:', accounts[0]);
+                this.account = accounts[0];
               }
           });
           this.publicClient = createPublicClient({
-            chain: hardhatLocal,
+            chain: sonicTestnet,
             transport: http()
           });
 
           this.walletClient = createWalletClient({
-            chain: hardhatLocal,
+            chain: sonicTestnet,
             transport: custom(window.ethereum)
           });
 
@@ -569,9 +570,6 @@ const hardhatLocal = defineChain({
             console.log('Estimated gas:', estimatedGas)
 
             const hash = await this.walletClient.writeContract({
-              ...this.contract,
-              functionName: 'submitQACheck',
-              account: this.account,
               ...data,
               gas: estimatedGas || BigInt(300000),
             });
