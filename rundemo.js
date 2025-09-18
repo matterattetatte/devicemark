@@ -19,9 +19,13 @@ export default async (req, res) => {
   
 
   if (req.url.includes('/components/')) {
-    // Failed to load module script: Expected a JavaScript-or-Wasm module script but the server responded with a MIME type of "". Strict MIME type checking is enforced for module scripts per HTML spec.
     res.setHeader('Content-Type', 'application/javascript');
     return readFileSync(`./frontend/${req.url}`).toString()
+  } else if (req.url.includes('/img/')) {
+  res.setHeader('Content-Type', 'image/png');
+  const imgBuffer = readFileSync(`./frontend/${req.url}`);
+  res.end(imgBuffer);
+  return;
   } else if (req.url.includes('product')) {
     return readFileSync('./frontend/product.html').toString()
   } else if (req.url.includes('tracker')) {
