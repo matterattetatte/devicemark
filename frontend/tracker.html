@@ -8,37 +8,29 @@
   <script defer id="vue-cdn" src="https://unpkg.com/vue@3.4.38/dist/vue.global.js"></script>
   <script defer src="https://unpkg.com/ipfs-http-client@60.0.0/dist/index.min.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 600px;
-      margin: 20px auto;
-      padding: 20px;
-    }
 
-    .section {
-      margin-bottom: 20px;
+    .badge {
+        width: 110px;
+        display: flex;
+        flex-direction: column;
+      display: flex;
+      align-items: center;
+      color: #f0f8ff;
+      background: #152a5a;
+      color: #ff9c00;
+      padding: 10px 0px;
+      border-radius: 12px;
+      border: 2px solid #ff9c00;
+      box-shadow: 0 2px 8px #152a5a44;
+      font-weight: 600;
+      font-size: 1.1rem;
+      z-index: 2;
+      gap: 8px;
     }
-
-    button {
-      padding: 10px;
-      margin-top: 10px;
-    }
-
-    textarea {
-      width: 100%;
-      height: 150px;
-    }
-
-    .status {
-      color: #333;
-    }
-
-    .error {
-      color: red;
-    }
-
-    .success {
-      color: green;
+    .badge-text {
+      color: #f0f8ff;
+      letter-spacing: 0.5px;
+      font-size: 0.9rem;
     }
   </style>
 </head>
@@ -46,14 +38,22 @@
 <body>
   <div class="visible" id="spinner"></div>
   <div id="app">
-    <h1>Tracking Device ID: {{ deviceId }}</h1>
+    <h1 style="color: #a0c3e9;">IMEI ID: {{ deviceId }}</h1>
     <div style="display:flex; justify-content:center; margin:20px 0;">
-    <img alt="Barcode Generator TEC-IT" :src="`https://barcode.tec-it.com/barcode.ashx?data=${deviceId}&code=Code128&eclevel=L`" />
+      <img alt="Barcode Generator TEC-IT" :src="`https://barcode.tec-it.com/barcode.ashx?data=${deviceId}&code=Code128&eclevel=L`" />
     </div>
     <code>
       {{ nftQARead }}
     </code>
-    <history-item v-for="(item, index) in nftQARead" :key="index" :item="item"></history-item>
+    <center class="badge">
+      <span class="badge-text">DeviceMark<span style="font-size: 7px;padding-bottom: 20px;">®</span> Verified</span>
+    </center>
+    <div class="timeline">
+      <div v-for="(item, index) in nftQARead" :key="index" style="position:relative;">
+        <history-item :item="item"></history-item>
+        <div v-if="index < nftQARead.length - 1" class="timeline-connector"></div>
+      </div>
+    </div>
   </div>
 
   <style>
@@ -66,8 +66,8 @@
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: #f8fafc;
-      color: #1f2a44;
+      background: #1c1f20;
+      color: #f0f8ff;
       line-height: 1.6;
       padding: 20px;
     }
@@ -77,7 +77,9 @@
       max-width: 640px;
       margin: 0 auto;
       padding: 24px;
-      background: #ffffff;
+      background: #1c1f20;
+  box-shadow: 0 6px 24px rgba(255, 255, 255, 0.247);
+
       border-radius: 16px;
       box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
       transition: opacity 1s ease-in-out;
@@ -287,6 +289,22 @@
       color: #1f2a44;
       white-space: pre-wrap;
       overflow-x: auto;
+    }
+
+    /* Timeline Styles */
+    .timeline {
+      position: relative;
+      padding: 0 0 0 20px;
+      margin: 20px 0;
+    }
+
+    .timeline-connector {
+      position: absolute;
+      left: 8px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, #4ade80, #f43f5e);
     }
 
     /* Responsive Design */

@@ -6,7 +6,7 @@
   <title>Product Page - Blockchain Verified</title>
   <style>
     body {
-      background: #f0f8ff;
+      background: #1c1f20;
       font-family: 'Inter', Arial, sans-serif;
       color: #152a5a;
       margin: 0;
@@ -47,9 +47,10 @@
   position: relative;
   max-width: 900px;
   margin: 48px auto 24px auto;
-  background: #f0f8ff;
+  background: #1c1f2065;
+  /* background: #1c1f2000; */
   border-radius: 16px;
-  box-shadow: 0 6px 24px #0c1a3d33;
+  box-shadow: 0 6px 24px rgba(255, 255, 255, 0.247);
   padding: 32px 32px 24px 32px;
   display: flex;
   gap: 40px;
@@ -80,51 +81,62 @@
       width: 320px;
       height: 320px;
       border-radius: 12px;
-      box-shadow: 0 4px 16px #0c1a3d44;
+      box-shadow: 0 6px 24px rgba(255, 255, 255, 0.247);
       object-fit: cover;
       background: #fff;
       display: block;
     }
+    .qr-image {
+        background: #fff;
+        padding: 6px;
+        width: 60px;
+        height: 60px;
+        border-radius: 3px;
+    }
     .badge {
+        width: 110px;
+        display: flex;
+        flex-direction: column;
       position: absolute;
-      left: 50%;
-      bottom: 16px;
+      left: 80%;
+      bottom: 4px;
       transform: translateX(-50%);
       display: flex;
       align-items: center;
-      background: #00c8d2;
       color: #f0f8ff;
-      padding: 10px 18px;
-      border-radius: 24px;
+      background: #152a5a;
+      color: #ff9c00;
+      padding: 10px 0px;
+      border-radius: 12px;
+      border: 2px solid #ff9c00;
       box-shadow: 0 2px 8px #152a5a44;
       font-weight: 600;
       font-size: 1.1rem;
       z-index: 2;
       gap: 8px;
-      border: 2px solid #152a5a;
     }
-    .badge-icon {
-      background: #152a5a;
-      color: #ff9c00;
+    .badge-icon-preview {
+        height: 0px;
+    }
+    .badge-icon-preview span {
+      background: #00c8d2;
+      color: white;
       border-radius: 50%;
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      margin-right: 6px;
-      box-shadow: 0 1px 4px #0c1a3d44;
+      padding: 3px 5px;       
+      position: relative;
+      bottom: 35px;
+      right: -45px;
     }
     .badge-text {
       color: #f0f8ff;
       letter-spacing: 0.5px;
+      font-size: 0.9rem;
     }
     .product-title {
       font-size: 1.5rem;
       font-weight: 700;
       margin: 24px 0 8px 0;
-      color: #152a5a;
+      color: #a0c3e9;
     }
     .product-price {
       font-size: 1.2rem;
@@ -133,7 +145,8 @@
       margin-bottom: 16px;
     }
     .product-desc {
-      color: #0c1a3d;
+      /* color: #0c1a3d; */
+      color: #f0f8ff;
       font-size: 1rem;
       margin-bottom: 20px;
     }
@@ -157,11 +170,12 @@
       max-width: 900px;
       margin: 32px auto 0 auto;
       padding: 0 16px;
+      position: relative;
     }
     .other-products-title {
       font-size: 1.2rem;
       font-weight: 600;
-      color: #152a5a;
+    color: #a0c3e9;
       margin-bottom: 16px;
     }
     .other-products-list {
@@ -171,14 +185,15 @@
       justify-content: center;
     }
     .other-product {
-      background: #fff;
+      background: #1c1f2065;
       border-radius: 12px;
-      box-shadow: 0 2px 8px #0c1a3d22;
+      box-shadow: 0 6px 24px rgba(255, 255, 255, 0.247);
       width: 180px;
       padding: 16px;
       text-align: center;
       margin-bottom: 24px;
       transition: box-shadow 0.2s;
+      cursor: pointer;
     }
     .other-product:hover {
       box-shadow: 0 4px 16px #00c8d244;
@@ -194,7 +209,7 @@
     .other-product-title {
       font-size: 1rem;
       font-weight: 600;
-      color: #152a5a;
+      color: #a0c3e9;
       margin-bottom: 6px;
     }
     .other-product-price {
@@ -216,10 +231,10 @@
   </div>
   <div class="product-container">
     <div class="image-wrapper">
-      <img class="product-image" src="https://via.placeholder.com/320x320?text=Galaxy+S24+Ultra" alt="Galaxy S24 Ultra" />
+      <img class="product-image" src="https://fdn2.gsmarena.com/vv/pics/samsung/samsung-galaxy-s24-ultra-5g-sm-s928-4.jpg" alt="Galaxy S24 Ultra" />
       <a style="text-decoration: none;" class="badge" href="https://en.wikipedia.org/wiki/Special:Random" target="_blank" rel="noopener noreferrer">
-        <span class="badge-icon">&#10004;</span>
-        <span class="badge-text">Blockchain Verified</span>
+        <span class="badge-text">DeviceMark<span style="font-size: 7px;padding-bottom: 20px;">®</span> Verified</span>
+        <img class="qr-image" alt='Barcode Generator TEC-IT' src='https://barcode.tec-it.com/barcode.ashx?data=test&code=MobileQRUrl'/>
       </a>
     </div>
     <div class="product-info-right">
@@ -227,7 +242,7 @@
       <div class="product-price">$1199.99</div>
       <div class="product-desc">
         The latest flagship smartphone from Samsung. Verified on the blockchain for authenticity and warranty. <br>
-        <span style="color:#00c8d2;">Color:</span> Phantom Black<br>
+        <span style="color:#00c8d2;">Color:</span> Silver grey<br>
         <span style="color:#ff9c00;">Storage:</span> 256GB, 512GB, 1TB
       </div>
       <button class="buy-btn">Buy Now</button>
@@ -237,26 +252,36 @@
     <div class="other-products-title">Other Products You May Like</div>
     <div class="other-products-list">
       <div class="other-product">
-        <img class="other-product-img" src="https://via.placeholder.com/120x120?text=Phone+1" alt="Phone 1" />
-        <div class="other-product-title">Galaxy S24 Ultra</div>
-        <div class="other-product-price">$1199.99</div>
-      </div>
-      <div class="other-product">
-        <img class="other-product-img" src="https://via.placeholder.com/120x120?text=Phone+2" alt="Phone 2" />
+        <img class="other-product-img" src="https://fdn2.gsmarena.com/vv/pics/apple/apple-iphone-15-pro-max-1.jpg" alt="Phone 2" />
+        <div class="badge-icon-preview">
+            <span>
+                &#10004;
+            </span>
+        </div>
         <div class="other-product-title">iPhone 15 Pro Max</div>
         <div class="other-product-price">$1299.99</div>
       </div>
       <div class="other-product">
-        <img class="other-product-img" src="https://via.placeholder.com/120x120?text=Phone+3" alt="Phone 3" />
+        <img class="other-product-img" src="https://fdn2.gsmarena.com/vv/pics/google/google-pixel-9-pro-1.jpg" alt="Phone 3" />
         <div class="other-product-title">Pixel 9 Pro</div>
         <div class="other-product-price">$999.99</div>
       </div>
       <div class="other-product">
-        <img class="other-product-img" src="https://via.placeholder.com/120x120?text=Phone+4" alt="Phone 4" />
+        <img class="other-product-img" src="https://fdn2.gsmarena.com/vv/pics/oneplus/oneplus-12-2.jpg" alt="Phone 4" />
         <div class="other-product-title">OnePlus 12</div>
         <div class="other-product-price">$899.99</div>
       </div>
     </div>
   </div>
+  <script>
+        window.onload = function() {
+            const [deviceId] = window.location.href.split('/').slice(-1)
+            const href = 'http://localhost:3000/tracker?deviceId=' + deviceId
+
+            const badge = document.querySelector('a.badge')
+            badge.querySelector('img').src = 'https://barcode.tec-it.com/barcode.ashx?data=' + href + '&code=MobileQRUrl'
+            badge.href = href
+        };
+  </script>
 </body>
 </html>
