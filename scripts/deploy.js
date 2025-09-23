@@ -15,10 +15,10 @@ async function main() {
   // Setup accounts
   const [deployer, ...qaFactorySigners] = await ethers.getSigners()
 
-  const PLNC = await hre.ethers.getContractFactory("PLNC")
-  const plnc = await PLNC.deploy(deployer.address)
-  await plnc.waitForDeployment()
-  const plncAddress = await plnc.getAddress()
+  const DMC = await hre.ethers.getContractFactory("DMC")
+  const dmc = await DMC.deploy(deployer.address)
+  await dmc.waitForDeployment()
+  const dmccAddress = await dmc.getAddress()
 
   const DeviceNFT = await ethers.getContractFactory("DeviceNFT");
   const deviceNFT = await DeviceNFT.deploy(); // Assumes deviceNFT has no constructor args; adjust if needed
@@ -28,7 +28,7 @@ async function main() {
   console.log('NFT contract deployed to:', deviceNFTAddress);
 
   const DevicesQA = await hre.ethers.getContractFactory("DevicesQA")
-  const devicesQA = await DevicesQA.deploy(plncAddress, deviceNFTAddress)
+  const devicesQA = await DevicesQA.deploy(dmccAddress, deviceNFTAddress)
   await devicesQA.waitForDeployment()
 
   const address = await devicesQA.getAddress()
@@ -70,19 +70,19 @@ async function main() {
     // manual user, temp
     const [userSigner] = qaFactorySigners.slice(-1)
     // const passengerBalance = await deployer.provider.getBalance(userSigner.address)
-    const passengerBalance = await plnc.balanceOf(userSigner.address)
+    const passengerBalance = await dmc.balanceOf(userSigner.address)
 
     console.log('user signre address', userSigner.address, passengerBalance)
     if (passengerBalance < tokens(10000)) {
       console.log('MINT TOKENA!')
-      plnc.mint(userSigner.address, tokens(10000))
+      dmc.mint(userSigner.address, tokens(10000))
     }
 
     // we need to whitelist each signer
 
     // }
 
-  writeFileSync('./frontend/.env', `DEVICESQA_CONTRACT_ADDRESS=${address}\nPLNC_CONTRACT_ADDRESS=${plncAddress}\nDEVICE_NFT_CONTRACT_ADDRESS=${deviceNFTAddress}`, { flag: 'w' })
+  writeFileSync('./frontend/.env', `DEVICESQA_CONTRACT_ADDRESS=${address}\nDMC_CONTRACT_ADDRESS=${dmccAddress}\nDEVICE_NFT_CONTRACT_ADDRESS=${deviceNFTAddress}`, { flag: 'w' })
 
   await hre.run("verify:verify", {
     address: deviceNFTAddress,
@@ -91,7 +91,7 @@ async function main() {
 
   // await hre.run("verify:verify", {
   //   address: address,
-  //   constructorArguments: [plncAddress, deviceNFTAddress],
+  //   constructorArguments: [dmccAddress, deviceNFTAddress],
   // });
 }
 

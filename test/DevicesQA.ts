@@ -47,7 +47,7 @@ async function isIpfsDaemonUp(once?: boolean) {
 }
 
 describe("DevicesQA", () => {
-  let plnc
+  let dmc
 
   before(async () => {
     console.log("Starting IPFS node...");
@@ -72,15 +72,15 @@ describe("DevicesQA", () => {
     // Get signers: deployer and QA factory
     [global.deployer, global.qaFactory] = await ethers.getSigners();
 
-    const PLNC = await ethers.getContractFactory("PLNC");
-    plnc = await PLNC.deploy(global.deployer); // Assumes PLNC has no constructor args; adjust if needed
+    const DMC = await ethers.getContractFactory("DMC");
+    dmc = await DMC.deploy(global.deployer); // Assumes DMC has no constructor args; adjust if needed
 
     const DeviceNFT = await ethers.getContractFactory("DeviceNFT");
     global.deviceNFT = await DeviceNFT.deploy(); // Assumes deviceNFT has no constructor args; adjust if needed
 
     const DevicesQA = await ethers.getContractFactory("DevicesQA");
 
-    global.devicesQA = await DevicesQA.deploy(plnc.getAddress(), global.deviceNFT.getAddress());
+    global.devicesQA = await DevicesQA.deploy(dmc.getAddress(), global.deviceNFT.getAddress());
     await global.devicesQA.waitForDeployment()
   });
 
