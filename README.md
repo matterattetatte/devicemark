@@ -50,3 +50,11 @@ By Monday:
 | Orange-Yellow glow / burst                   | **#ff9c00** | (255, 156, 0)   |
 | Near-white / light for text / highlights     | **#f0f8ff** | (240, 248, 255) |
 | Darker shade for contrast (shadow / borders) | **#0c1a3d** | (12, 26, 61)    |
+
+
+## Time estimate
+
+* Nytt token som kupong + tester 6h
+* Standardiserade grades - 0 - 5 ny parameter som är numeriskt värde - 4h (inkl tester och display-logik)
+// * make sure to replace all black to green in image <img alt="Barcode Generator TEC-IT" src="https://barcode.tec-it.com/barcode.ashx?data=356127107307440&amp;code=Code128&amp;eclevel=L"> 
+* Check how the raw request looks like when signing a transaction

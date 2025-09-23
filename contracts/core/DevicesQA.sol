@@ -4,13 +4,13 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 import "../interfaces/IDevicesQA.sol";
-import "./DeviceNFT.sol";
-import "../mock/PLNC.sol";
+import "../tokens/DeviceNFT.sol";
+import "../tokens/DMC.sol";
 
 contract DevicesQA is IDevicesQA, Ownable {
     // State variables
-    PLNC public immutable plncToken; // PLNC token contract
-    DeviceNFT public immutable deviceNFT; // PLNC token contract
+    DMC public immutable dmcToken; // DMC token contract
+    DeviceNFT public immutable deviceNFT; // DMC token contract
     address[] public allowedFactories; // Array of allowed QA factory addresses
     mapping(address => Factory) public factories; // Mapping of factory details
 
@@ -27,9 +27,9 @@ contract DevicesQA is IDevicesQA, Ownable {
         _;
     }
 
-    constructor(PLNC _plncToken, DeviceNFT _nftContract) Ownable(msg.sender) {
-        if (address(_plncToken) == address(0) || address(_nftContract) == address(0)) revert ZeroAddress();
-        plncToken = _plncToken;
+    constructor(DMC _dmcToken, DeviceNFT _nftContract) Ownable(msg.sender) {
+        if (address(_dmcToken) == address(0) || address(_nftContract) == address(0)) revert ZeroAddress();
+        dmcToken = _dmcToken;
         deviceNFT = _nftContract;
     }
 
@@ -72,10 +72,10 @@ contract DevicesQA is IDevicesQA, Ownable {
     }
 
     // maybe allowance?? what about pectra approval stuff?
-    // Submit a QA check for an NFT
-    // TODO: 1. we require 4 pln to be sent in order to process this qa thingy
-    // ipfsCID
     function submitQACheck(uint64 deviceId, bool passed, string[] calldata faultCodes, string calldata date, string calldata ipfsCID) external onlyAllowed {
+        // TODO: 2. charge DMC tokens for the QA check
+        // dmcToken.transferFrom(msg.sender, owner(), 1); // One token - one write
+
         // Verify NFT exists and is owned by someone
         try deviceNFT.ownerOf(deviceId) returns (address owner) {
             if (owner == address(0)) revert InvalidNFT();

@@ -8,9 +8,9 @@
     "deploy:sonic": "hardhat compile && hardhat run scripts/deploy.js --network sonic",
     "demo": "micro rundemo.js",
     "demo:dev": "nodemon --watch ./frontend -e html,js,css --exec \"micro rundemo.js\"",
-    "node:local": "hardhat node --port 8545 --network localhost",
-    "deploy:local": "hardhat compile && hardhat run scripts/deploy.js --network localhost",
-    "symlink:plnc": "mkdir -p frontend/src/abis && ln -sf \"$PWD/artifacts/contracts/mock/PLNC.sol/PLNC.json\" frontend/src/abis/PLNC.json && ln -sf \"$PWD/artifacts/contracts/mock/PLNC.sol/PLNC.dbg.json\" frontend/src/abis/PLNC.db.json"
+    "node:local": "hardhat node --port 8545 --network hardhat",
+    "deploy:local": "hardhat compile && hardhat run scripts/deploy.js --network hardhat",
+    "symlink:dmc": "mkdir -p frontend/src/abis && ln -sf \"$PWD/artifacts/contracts/mock/DMC.sol/DMC.json\" frontend/src/abis/DMC.json && ln -sf \"$PWD/artifacts/contracts/mock/DMC.sol/DMC.dbg.json\" frontend/src/abis/DMC.db.json"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.9",
