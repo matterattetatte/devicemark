@@ -3,7 +3,7 @@ export default {
     <div style="z-index: 99; position: relative;background: #1c1f20;box-shadow: 0 6px 24px rgba(255, 255, 255, 0.247);border-radius: 16px; margin-bottom: 40px; padding: 18px 24px; font-family: 'Inter', Arial, sans-serif;">
       <div style="display:flex" v-if="collapsed">
         <button class="btn btn-secondary" @click="toggleCollapse" style="font-weight:600; font-size:1.05rem; background:#152a5a; color:#f0f8ff; border-radius:10px; padding:10px 18px;">
-          <span :style="{ background: eventTypeColor, color: '#f0f8ff', borderRadius: '8px', padding: '4px 12px', fontWeight: '600', marginRight: '12px', boxShadow: '0 2px 8px #0c1a3d44' }">{{ item.eventType || 'TEST' }}</span>
+          <span :style="{ background: eventTypeColor, color: '#f0f8ff', borderRadius: '8px', padding: '4px 12px', fontWeight: '600', marginRight: '12px', boxShadow: '0 2px 8px #0c1a3d44' }">{{ item.eventType || 'Quality check' }}</span>
           Show Details
         </button>
         <div style="flex-grow:1; text-align:right; color:#f0f8ff; font-weight:600; align-self:center; font-size:0.95rem;">
@@ -13,7 +13,7 @@ export default {
       <div v-else>
         <div style="display:flex;">
           <button class="btn btn-secondary" @click="toggleCollapse" style="font-weight:600; font-size:1.05rem; background:#152a5a; color:#f0f8ff; border-radius:10px; padding:10px 18px;">
-            <span :style="{ background: eventTypeColor, color: '#f0f8ff', borderRadius: '8px', padding: '4px 12px', fontWeight: '600', marginRight: '12px', boxShadow: '0 2px 8px #0c1a3d44' }">{{ item.eventType || 'TEST' }}</span>
+            <span :style="{ background: eventTypeColor, color: '#f0f8ff', borderRadius: '8px', padding: '4px 12px', fontWeight: '600', marginRight: '12px', boxShadow: '0 2px 8px #0c1a3d44' }">{{ item.eventType || 'Quality check' }}</span>
             Hide Details
           </button>
           <div style="flex-grow:1; text-align:right; color:#f0f8ff; font-weight:600; align-self:center; font-size:0.95rem;">
@@ -43,6 +43,19 @@ export default {
               <td style="padding:8px 10px; color: #f0f8ff; font-weight:600;">Location</td>
               <td style="padding:8px 10px;">{{ item.location }}</td>
             </tr>
+            // DISPLAY TOTAL TEST PARAMETERS
+            // DISPLAY SUCCESSFUL TEST PARAMETERS
+            // ALSO, COSMETIC SCORE (hover) 
+            // data on blockchain: numeric score 0-5
+            A+ (New)
+            A (like new)
+            B (lite sights of use)
+            C (clear signs of use)
+            D (heavy signs of use)
+            F (non-functional)
+            // to display: letter, when hover over info icon, display description
+            // tood: functional test passed instead
+            // grade score - cosmetic grade
             <tr>
               <td style="padding:8px 10px; color: #f0f8ff; font-weight:600;">Test Protocol Raw File</td>
               <td style="padding:8px 10px;"><a :href="item.ipfsDataUrl" target="_blank" style="color:#00c8d2; font-weight:600; text-decoration:underline;">URL</a></td>

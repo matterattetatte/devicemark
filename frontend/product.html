@@ -275,7 +275,8 @@
   </div>
   <script>
         window.onload = function() {
-            const [deviceId] = window.location.href.split('/').slice(-1)
+            const params = new URLSearchParams(window.location.search);
+            this.deviceId = params.get('deviceId');
             const href = 'http://localhost:3000/tracker?deviceId=' + deviceId
 
             const badge = document.querySelector('a.badge')
