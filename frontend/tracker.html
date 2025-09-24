@@ -69,8 +69,9 @@
     <h1 style="color: #a0c3e9;">IMEI ID: {{ deviceId }}</h1>
     <br>
     <center class="badge">
-        <span class="badge-text">DeviceMark<span style="font-size: 7px;padding-bottom: 20px;">®</span> Verified</span>
-        <img class="qr-image" alt='Barcode Generator TEC-IT' :src='`https://barcode.tec-it.com/barcode.ashx?data=${deviceId}&code=MobileQRUrl`'/>
+      <span class="badge-text">DeviceMark<span style="font-size: 7px;padding-bottom: 20px;">®</span> Verified</span>
+      <img class="qr-image" alt='Barcode Generator TEC-IT'
+        :src='`https://barcode.tec-it.com/barcode.ashx?data=${deviceId}&code=MobileQRUrl`' />
     </center>
     <div>
       <p style="text-align:center; font-weight:600; margin-top:16px;"><span class="live-indicator">●</span> Last Fetched
@@ -338,14 +339,16 @@
     .timeline-connector::after {
       content: '';
       position: absolute;
-      bottom: 100%;   /* Position above the line */
+      bottom: 100%;
+      /* Position above the line */
       left: 50%;
       transform: translateX(-50%);
       width: 0;
       height: 0;
       border-left: 6px solid transparent;
       border-right: 6px solid transparent;
-      border-bottom: 10px solid #4ade80; /* This makes the triangle point upwards */
+      border-bottom: 10px solid #4ade80;
+      /* This makes the triangle point upwards */
     }
 
 
@@ -447,14 +450,14 @@
                         "type": "uint256"
                       },
                       {
-                        "internalType": "bool",
-                        "name": "passed",
-                        "type": "bool"
+                        "internalType": "string",
+                        "name": "funcTests",
+                        "type": "string"
                       },
                       {
-                        "internalType": "string[]",
-                        "name": "faultCodes",
-                        "type": "string[]"
+                        "internalType": "int8",
+                        "name": "cosmeticGrade",
+                        "type": "int8"
                       },
                       {
                         "internalType": "string",
@@ -474,7 +477,7 @@
                 ],
                 "stateMutability": "view",
                 "type": "function"
-              }],
+              },],
               functionName: 'getHistory',
               args: [BigInt(this.deviceId)]
             });
@@ -514,7 +517,7 @@
           const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
           const data = imageData.data;
 
-          const targetColor = {r: 160, g: 195, b: 233}; // Your full target color
+          const targetColor = { r: 160, g: 195, b: 233 }; // Your full target color
 
           for (let i = 0; i < data.length; i += 4) {
             const r = data[i];

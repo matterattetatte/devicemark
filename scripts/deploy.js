@@ -95,10 +95,12 @@ async function main() {
 
   writeFileSync('./frontend/.env', `DEVICESQA_CONTRACT_ADDRESS=${address}\nDMC_CONTRACT_ADDRESS=${dmccAddress}\nDEVICE_NFT_CONTRACT_ADDRESS=${deviceNFTAddress}`, { flag: 'w' })
 
-  await hre.run("verify:verify", {
-    address: deviceNFTAddress,
-    constructorArguments: [],
-  });
+  if (hre.network.name !== 'hardhat' && hre.network.name !== 'localhost') {
+    await hre.run("verify:verify", {
+      address: deviceNFTAddress,
+      constructorArguments: [],
+    });
+  }
 
   // await hre.run("verify:verify", {
   //   address: address,

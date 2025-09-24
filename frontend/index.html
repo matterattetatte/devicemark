@@ -384,7 +384,7 @@
     sonicTestnet.id = 14601 // hack for now!
 
     const hardhatLocal = defineChain({
-      id: sonicTestnet.id,               // set this to whatever chainId you've configured for your Hardhat / localhost
+      id: 31337,               // set this to whatever chainId you've configured for your Hardhat / localhost
       name: 'hardhat-local',
       network: 'hardhat-local',
       nativeCurrency: {
@@ -667,14 +667,14 @@
                       "type": "uint256"
                     },
                     {
-                      "internalType": "bool",
-                      "name": "passed",
-                      "type": "bool"
+                      "internalType": "string",
+                      "name": "funcTests",
+                      "type": "string"
                     },
                     {
-                      "internalType": "string[]",
-                      "name": "faultCodes",
-                      "type": "string[]"
+                      "internalType": "int8",
+                      "name": "cosmeticGrade",
+                      "type": "int8"
                     },
                     {
                       "internalType": "string",
@@ -694,7 +694,7 @@
               ],
               "stateMutability": "view",
               "type": "function"
-            }],
+            },],
             functionName: 'getHistory',
             args: [BigInt(this.parsedPDFData.IMEI)]
           });
