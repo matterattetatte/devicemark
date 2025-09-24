@@ -6,15 +6,13 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "../interfaces/INFTContract.sol";
 
 contract DeviceNFT is ERC721 {
-    uint64 private _deviceIdCounter; // Simple counter for token IDs
-
     // Struct to store history events
     struct HistoryEvent {
-    uint256 timestamp;
-    bool passed;
-    string[] faultCodes;
-    string date;
-    string ipfsCID;
+        uint256 timestamp;
+        string funcTests;
+        int8 cosmeticGrade;
+        string date;
+        string ipfsCID;
     }
 
     // Mapping of deviceId to array of history events
@@ -23,9 +21,7 @@ contract DeviceNFT is ERC721 {
     // Event for history updates
     event HistoryAdded(uint256 indexed deviceId, string timestamp);
 
-    constructor() ERC721("DeviceNFT", "CNFT") {
-        _deviceIdCounter = 1; // Start token IDs at 1
-    }
+    constructor() ERC721("DeviceNFT", "DNFT") {}
 
     // Mint a new NFT (callable by DevicesQA)
     function mint(address to, uint64 deviceId) external {
@@ -35,14 +31,20 @@ contract DeviceNFT is ERC721 {
     }
 
     // Add history event for a token (callable by DevicesQA)
-    function addHistory(uint64 deviceId, bool passed, string[] calldata faultCodes, string calldata date, string calldata ipfsCID) external {
-    // should only creator be able to modify?
-    require(_ownerOf(deviceId) != address(0), "Token does not exist");
+    function addHistory(
+        uint64 deviceId,
+        string memory funcTests,
+        int8 cosmeticGrade,
+        string memory date,
+        string memory ipfsCID
+    ) external {
+        // should only creator be able to modify?
+        require(_ownerOf(deviceId) != address(0), "Token does not exist");
 
         tokenHistory[deviceId].push(HistoryEvent({
             timestamp: block.timestamp,
-            passed: passed,
-            faultCodes: faultCodes,
+            funcTests: funcTests,
+            cosmeticGrade: cosmeticGrade,
             date: date,
             ipfsCID: ipfsCID
         }));

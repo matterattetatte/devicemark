@@ -28,19 +28,6 @@ This code allows QA Factories to upload QA test data to decentralized immutable 
 ### 6. Start demo
 `$ npm run demo`
 
-
-
-### TODOS
-By Monday:
-
-- Filuppladdning (extrahera data i tabellformat: Pass/fail, faultcodes int[], grade string). Behöver inte se super ut. - TODO: uppdatera kontraktet så att det kan ta emot summary
-
-- En enkel eBay-mock (white label) på produktsidan. Ska se likadan ut, men en grön ikon som är klickbar som navigerar i ny flik till lookupen...
-
-- Snygg lookup (se postnord-tracking), som hämtar och visar blockchain-data
-
-
-
 ## Color palette
 
 | Purpose / Region                             | Hex         | Approx RGB      |
@@ -54,7 +41,4 @@ By Monday:
 
 ## Time estimate
 
-* Nytt token som kupong + tester 6h
 * Standardiserade grades - 0 - 5 ny parameter som är numeriskt värde - 4h (inkl tester och display-logik)
-// * make sure to replace all black to green in image <img alt="Barcode Generator TEC-IT" src="https://barcode.tec-it.com/barcode.ashx?data=356127107307440&amp;code=Code128&amp;eclevel=L"> 
-* Check how the raw request looks like when signing a transaction

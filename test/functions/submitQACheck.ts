@@ -46,12 +46,16 @@ describe("submitQACheck", () => {
     console.log(`Uploaded to IPFS with CID: ${cidStr}`);
 
   const nftId = 1; // example NFT id
-  const passed = true; // example check result
-  const faultCodes = ["FC001", "FC002"];
+  const funcTests = {
+    verdict: "PASS",
+    total: 10,
+    passed: 10,
+    faultCodes: ["FC001", "FC002"],
+  }
+  const cosmeticGrade = 1;
   const date = "2025-08-20";
 
-  // Call submitQACheck on the devicesQA contract
-  transaction = await devicesQA.connect(qaFactory).submitQACheck(nftId, passed, faultCodes, date, cidStr);
+  transaction = await devicesQA.connect(qaFactory).submitQACheck(nftId, JSON.stringify(funcTests), cosmeticGrade, date, cidStr);
   await transaction.wait();
   
   const downloadedData = await getFileByCid(cidStr)
@@ -68,20 +72,35 @@ describe("submitQACheck", () => {
     const nftId = 1; // example NFT id
     const qaChecks = [
       { 
-        passed: true, 
-        faultCodes: ["FC001", "FC002"],
+        funcTests: {
+          verdict: "PASS",
+          total: 10,
+          passed: 8,
+          faultCodes: ["FC001", "FC002"],
+        },
+        cosmeticGrade: 1,
         date: "2025-08-20",
         ipfsCID: "bafybeih"
       },
       { 
-        passed: true, 
-        faultCodes: ["FC003"],
+        funcTests: {
+          verdict: "PASS",
+          total: 10,
+          passed: 9,
+          faultCodes: ["FC003"],
+        }, 
+        cosmeticGrade: 2, 
         date: "2025-08-21",
         ipfsCID: "bafybeih2"
       },
       { 
-        passed: false, 
-        faultCodes: ["FC004", "FC005"],
+        funcTests: {
+          verdict: "PASS",
+          total: 10,
+          passed: 8,
+          faultCodes: ["FC004", "FC005"],
+        }, 
+        cosmeticGrade: 2, 
         date: "2025-08-22",
         ipfsCID: "bafybeih5"
       },
@@ -89,7 +108,7 @@ describe("submitQACheck", () => {
 
     // Submit multiple QA checks sequentially
     for (const check of qaChecks) {
-      transaction = await devicesQA.connect(qaFactory).submitQACheck(nftId, check.passed, check.faultCodes, check.date, check.ipfsCID);
+      transaction = await devicesQA.connect(qaFactory).submitQACheck(nftId, JSON.stringify(check.funcTests), check.cosmeticGrade, check.date, check.ipfsCID);
       await transaction.wait();
 
       // Verify HistoryAdded event

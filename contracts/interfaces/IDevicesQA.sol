@@ -18,5 +18,11 @@ interface IDevicesQA {
 
     function registerQAFactory(address factoryAddress, string calldata name, string calldata certificationNumber) external;
     function unRegisterQAFactory() external;
-    function submitQACheck(uint64 deviceId, bool passed, string[] calldata faultCodes, string calldata date, string calldata ipfsCID) external;
+    function submitQACheck(
+        uint64 deviceId,
+        string calldata funcTests,
+        int8 cosmeticGrade,
+        string calldata date,
+        string calldata ipfsCID
+    ) external;
 }

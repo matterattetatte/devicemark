@@ -71,7 +71,13 @@ contract DevicesQA is IDevicesQA, Ownable {
         emit FactoryUnregistered(msg.sender);
     }
 
-    function submitQACheck(uint64 deviceId, bool passed, string[] calldata faultCodes, string calldata date, string calldata ipfsCID) external onlyAllowed {
+    function submitQACheck(
+        uint64 deviceId,
+        string memory funcTests,
+        int8 cosmeticGrade,
+        string memory date,
+        string memory ipfsCID
+    ) external onlyAllowed {
         dmcToken.burn(msg.sender, 1); // One token - one write
 
         // Verify NFT exists and is owned by someone
@@ -82,7 +88,7 @@ contract DevicesQA is IDevicesQA, Ownable {
             deviceNFT.mint(msg.sender, deviceId);
         }
 
-        deviceNFT.addHistory(deviceId, passed, faultCodes, date, ipfsCID);
+        deviceNFT.addHistory(deviceId, funcTests, cosmeticGrade, date, ipfsCID);
     }
 
     function getQAFactoriesList() external view returns (address[] memory) {

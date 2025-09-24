@@ -52,9 +52,9 @@ export default {
             B (lite sights of use)
             C (clear signs of use)
             D (heavy signs of use)
-            F (non-functional)
+            F (non-func)
             // to display: letter, when hover over info icon, display description
-            // tood: functional test passed instead
+            // tood: func test passed instead
             // grade score - cosmetic grade
             <tr>
               <td style="padding:8px 10px; color: #f0f8ff; font-weight:600;">Test Protocol Raw File</td>
