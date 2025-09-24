@@ -28,34 +28,29 @@ export default {
               <td style="padding:8px 10px;">{{ item.date }}</td>
             </tr>
             <tr>
-              <td style="padding:8px 10px; color: #f0f8ff; font-weight:600;">Passed</td>
-              <td style="padding:8px 10px;">{{ item.passed }}</td>
+              <td style="padding:8px 10px; color: #f0f8ff; font-weight:600;">Functionality tests verdict</td>
+              <td style="padding:8px 10px;">{{ item.funcTests.verdict }}</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 10px; color: #f0f8ff; font-weight:600;">Functionality tests total</td>
+              <td style="padding:8px 10px;">{{ item.funcTests.total }}</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 10px; color: #f0f8ff; font-weight:600;">Functionality tests passed</td>
+              <td style="padding:8px 10px;">{{ item.funcTests.passed }}</td>
             </tr>
             <tr>
               <td style="padding:8px 10px; color: #f0f8ff; font-weight:600;">Fault Codes</td>
-              <td style="padding:8px 10px;">{{ item.faultCodes.join(', ') }}</td>
+              <td style="padding:8px 10px;">{{ item.funcTests.faultCodes.join(', ') }}</td>
             </tr>
             <tr>
-              <td style="padding:8px 10px; color: #f0f8ff; font-weight:600;">Grade Score</td>
-              <td style="padding:8px 10px;">{{ item.gradeScore }}</td>
+              <td style="padding:8px 10px; color: #f0f8ff; font-weight:600;">Cosmetics grade</td>
+              <td style="padding:8px 10px;">{{ item.cosmeticGrade }} </td>
             </tr>
             <tr>
               <td style="padding:8px 10px; color: #f0f8ff; font-weight:600;">Location</td>
-              <td style="padding:8px 10px;">{{ item.location }}</td>
+              <td style="padding:8px 10px;">{{ item.location || 'N/A' }}</td>
             </tr>
-            // DISPLAY TOTAL TEST PARAMETERS
-            // DISPLAY SUCCESSFUL TEST PARAMETERS
-            // ALSO, COSMETIC SCORE (hover) 
-            // data on blockchain: numeric score 0-5
-            A+ (New)
-            A (like new)
-            B (lite sights of use)
-            C (clear signs of use)
-            D (heavy signs of use)
-            F (non-func)
-            // to display: letter, when hover over info icon, display description
-            // tood: func test passed instead
-            // grade score - cosmetic grade
             <tr>
               <td style="padding:8px 10px; color: #f0f8ff; font-weight:600;">Test Protocol Raw File</td>
               <td style="padding:8px 10px;"><a :href="item.ipfsDataUrl" target="_blank" style="color:#00c8d2; font-weight:600; text-decoration:underline;">URL</a></td>

@@ -78,7 +78,9 @@ contract DevicesQA is IDevicesQA, Ownable {
         string memory date,
         string memory ipfsCID
     ) external onlyAllowed {
-        dmcToken.burn(msg.sender, 1); // One token - one write
+        require(dmcToken.balanceOf(msg.sender) >= 1e18, "Not enough DMC tokens to burn");
+
+        dmcToken.burn(msg.sender, 1e18); // burns 1 token if decimals is 18
 
         // Verify NFT exists and is owned by someone
         try deviceNFT.ownerOf(deviceId) returns (address owner) {

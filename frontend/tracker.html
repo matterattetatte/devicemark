@@ -486,6 +486,17 @@
             data.forEach((item) => {
               item.ipfsDataUrl = `http://localhost:8080/ipfs/${item.ipfsCID}`
               item.timestamp = item.timestamp.toString()
+              item.funcTests = JSON.parse(item.funcTests)
+
+              item.cosmeticGrade = {
+                '-1': 'Not graded',
+                '0': 'A+ - Like new',
+                '1': 'A - Excellent',
+                '2': 'B - Very Good',
+                '3': 'C - Good',
+                '4': 'D - Acceptable',
+                '5': 'F - Poor'
+              }[item.cosmeticGrade] || 'Unknown'
             })
 
             this.nftQARead = data.reverse()

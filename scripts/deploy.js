@@ -77,21 +77,9 @@ async function main() {
 
   console.log('checking network', hre.network.config)
   console.log('DEPLOYER ADDRESS', deployer.address)
-  // if (hre.network.config.chainId === 31337) {
-    // manual user, temp
-    const [userSigner] = qaFactorySigners.slice(-1)
-    // const passengerBalance = await deployer.provider.getBalance(userSigner.address)
-    const passengerBalance = await dmc.balanceOf(userSigner.address)
+  const [userSigner] = qaFactorySigners.slice(-1)
 
-    console.log('user signer address', userSigner.address, passengerBalance)
-    if (passengerBalance < tokens(10000)) {
-      console.log('MINT TOKENA!')
-      dmc.mint(userSigner.address, tokens(10000))
-    }
-
-    // we need to whitelist each signer
-
-    // }
+  console.log('user signer address', userSigner.address, passengerBalance)
 
   writeFileSync('./frontend/.env', `DEVICESQA_CONTRACT_ADDRESS=${address}\nDMC_CONTRACT_ADDRESS=${dmccAddress}\nDEVICE_NFT_CONTRACT_ADDRESS=${deviceNFTAddress}`, { flag: 'w' })
 
