@@ -71,10 +71,8 @@ contract DevicesQA is IDevicesQA, Ownable {
         emit FactoryUnregistered(msg.sender);
     }
 
-    // maybe allowance?? what about pectra approval stuff?
     function submitQACheck(uint64 deviceId, bool passed, string[] calldata faultCodes, string calldata date, string calldata ipfsCID) external onlyAllowed {
-        // TODO: 2. charge DMC tokens for the QA check
-        // dmcToken.transferFrom(msg.sender, owner(), 1); // One token - one write
+        dmcToken.burn(msg.sender, 1); // One token - one write
 
         // Verify NFT exists and is owned by someone
         try deviceNFT.ownerOf(deviceId) returns (address owner) {

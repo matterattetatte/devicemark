@@ -73,14 +73,14 @@ describe("DevicesQA", () => {
     [global.deployer, global.qaFactory] = await ethers.getSigners();
 
     const DMC = await ethers.getContractFactory("DMC");
-    dmc = await DMC.deploy(global.deployer); // Assumes DMC has no constructor args; adjust if needed
+    global.dmc = await DMC.deploy(global.deployer); // Assumes DMC has no constructor args; adjust if needed
 
     const DeviceNFT = await ethers.getContractFactory("DeviceNFT");
     global.deviceNFT = await DeviceNFT.deploy(); // Assumes deviceNFT has no constructor args; adjust if needed
 
     const DevicesQA = await ethers.getContractFactory("DevicesQA");
 
-    global.devicesQA = await DevicesQA.deploy(dmc.getAddress(), global.deviceNFT.getAddress());
+    global.devicesQA = await DevicesQA.deploy(global.dmc.getAddress(), global.deviceNFT.getAddress());
     await global.devicesQA.waitForDeployment()
   });
 

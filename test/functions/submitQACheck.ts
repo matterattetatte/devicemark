@@ -3,8 +3,6 @@ import { expect } from "chai"
 import path from 'path';
 import AdmZip from 'adm-zip';
 
-import { tokens } from "./DevicesQA"
-
 async function getFileByCid(cid) {
   try {
     const file = await global.ipfsClient.cat(cid);
@@ -19,9 +17,9 @@ async function getFileByCid(cid) {
 }
 
 describe("submitQACheck", () => {
-  let deployer, devicesQA, deviceNFT, qaFactory, transaction;
+  let deployer, devicesQA, deviceNFT, dmc, qaFactory, transaction;
   beforeEach(async () => {
-    ;[{ deployer, devicesQA, deviceNFT, qaFactory }] = [global as any]
+    ;[{ deployer, devicesQA, dmc, deviceNFT, qaFactory }] = [global as any]
 
     const profile = {
       name: "QualityCorp",
@@ -29,6 +27,8 @@ describe("submitQACheck", () => {
     };
 
     transaction = await devicesQA.connect(deployer).registerQAFactory(qaFactory.address, profile.name, profile.certificationNumber);
+
+    global.dmc.mint(qaFactory.address, 10)
     await transaction.wait();
   })
 
@@ -53,12 +53,16 @@ describe("submitQACheck", () => {
   // Call submitQACheck on the devicesQA contract
   transaction = await devicesQA.connect(qaFactory).submitQACheck(nftId, passed, faultCodes, date, cidStr);
   await transaction.wait();
-
-  await expect(transaction).to.emit(deviceNFT, "HistoryAdded")
-
+  
   const downloadedData = await getFileByCid(cidStr)
+  
+  const dmcBalance = await dmc.balanceOf(qaFactory.address);
+  
 
+  expect(dmcBalance).to.equal(9);
+ 
   expect(downloadedData).to.equal(zipData.toString())
+  await expect(transaction).to.emit(deviceNFT, "HistoryAdded")
   });
   it("should submit multiple sequential QA checks and verify NFT history", async () => {
     const nftId = 1; // example NFT id
@@ -95,6 +99,9 @@ describe("submitQACheck", () => {
     // Get the NFT and its history
     const nftHistory = await deviceNFT.getHistory(nftId);
     const nftOwner = await deviceNFT.ownerOf(nftId);
+    const dmcBalance = await dmc.balanceOf(qaFactory.address);
+
+    expect(dmcBalance).to.equal(10 - qaChecks.length);
 
     // Verify the history length matches the number of QA checks
     expect(nftHistory.length).to.equal(qaChecks.length);
