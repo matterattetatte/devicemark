@@ -44,6 +44,9 @@ async function main() {
     const qaBalance = await deployer.provider.getBalance(qaFactory.address)
     console.log(`QA Factory ${qaFactory.address} balance before:`, ethers.formatEther(qaBalance), 'ETH')
 
+    const dmcQABalance = await dmc.balanceOf(qaFactory.address)
+    console.log(`QA Factory ${qaFactory.address} DMC balance before:`, ethers.formatEther(dmcQABalance), 'DMC')
+
     if (qaBalance === 0n) {
       const fundTx = await deployer.sendTransaction({
         to: qaFactory.address,
@@ -53,6 +56,14 @@ async function main() {
       console.log(`  → Funded with 0.05 ETH`)
     } else {
       console.log('  → Already has balance, skipping')
+    }
+
+    if (dmcQABalance < tokens(10)) {
+      const mintTx = await dmc.mint(qaFactorySigners[index].address, tokens(100))
+      await mintTx.wait()
+      console.log(`  → Minted 100 DMC`)
+    } else {
+      console.log('  → Already has DMC balance, skipping')
     }
 
     const qaFactorySigner = qaFactorySigners[index];
@@ -72,7 +83,7 @@ async function main() {
     // const passengerBalance = await deployer.provider.getBalance(userSigner.address)
     const passengerBalance = await dmc.balanceOf(userSigner.address)
 
-    console.log('user signre address', userSigner.address, passengerBalance)
+    console.log('user signer address', userSigner.address, passengerBalance)
     if (passengerBalance < tokens(10000)) {
       console.log('MINT TOKENA!')
       dmc.mint(userSigner.address, tokens(10000))
