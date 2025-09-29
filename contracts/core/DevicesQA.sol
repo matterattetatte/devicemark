@@ -87,7 +87,7 @@ contract DevicesQA is IDevicesQA, Ownable {
             if (owner == address(0)) revert InvalidNFT();
         } catch {
             // If NFT doesn't exist, mint a new one to the factory (assumed workflow)
-            deviceNFT.mint(msg.sender, deviceId);
+            deviceNFT.mint(address(this), deviceId);
         }
 
         deviceNFT.addHistory(deviceId, funcTests, cosmeticGrade, date, ipfsCID);
