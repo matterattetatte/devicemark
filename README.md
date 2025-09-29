@@ -49,4 +49,5 @@ This code allows QA Factories to upload QA test data to decentralized immutable 
 1. Center header for IMEI id in tracker page.
 2. No alert when imei missing, but a red dot instead of green with info with info about .
 3. Upload optional pictures (xxx USD) , calculate size times time and display in frontend.
-4. 
+4. Tracker page first - smaller text in parenthesis (debug links on blockchain explorer: .....)
+5. Get all data for NFT -> inspect onchain json data
