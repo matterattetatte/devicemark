@@ -92,10 +92,13 @@
       <h2>Status</h2>
       <p :class="{ error: status.includes('Error'), success: status.includes('Submitted') }">{{ status }}</p>
       <div v-if="txHash" class="links">
-        <p>Transaction: <a :href="txLink" target="_blank" class="link">View in blockchain explorer</a></p>
-        <p>IMEI: <a :href="nftLink" target="_blank" class="link">View NFT</a></p>
         <p>Tracker page <a :href="nftTracker" target="_blank" class="link">View Page</a></p>
-        <button @click="getAllNFTData" class="btn btn-secondary">Get all data for NFT</button>
+        <div style="font-size: 9px;">
+          <h3>Debugging links</h3>
+          <p>Transaction: <a :href="txLink" target="_blank" class="link">View in blockchain explorer</a></p>
+          <p>IMEI: <a :href="nftLink" target="_blank" class="link">View NFT</a></p>
+        </div>
+        <button @click="getAllNFTData" class="btn btn-secondary">Inspect on-chain JSON data</button>
       </div>
       <code v-if="nftQARead" class="code-block">
       {{ nftQARead }}
