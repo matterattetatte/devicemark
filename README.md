@@ -42,3 +42,11 @@ This code allows QA Factories to upload QA test data to decentralized immutable 
 ## Time estimate
 
 * Standardiserade grades - 0 - 5 ny parameter som är numeriskt värde - 4h (inkl tester och display-logik)
+
+
+## TODOS
+
+1. Center header for IMEI id in tracker page.
+2. No alert when imei missing, but a red dot instead of green with info with info about .
+3. Upload optional pictures (xxx USD) , calculate size times time and display in frontend.
+4. 

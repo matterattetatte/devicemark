@@ -7,7 +7,7 @@
 import hre from "hardhat"
 import { writeFileSync, readFileSync } from "fs"
 
-const mockQAFactories = JSON.parse(readFileSync("./mock/qaFactories.json").toString())
+const qaFactories = JSON.parse(readFileSync("./mock/qaFactories.json").toString())
 
 export const tokens = (n) => ethers.parseEther(n.toString())
 
@@ -40,7 +40,7 @@ async function main() {
 
   console.log('Now, registering some random qaFactories...')
 
-  for (const [index, qaFactory] of mockQAFactories.slice(0, 2).entries()) {
+  for (const [index, qaFactory] of qaFactories.slice(0, 2).entries()) {
     const qaBalance = await deployer.provider.getBalance(qaFactory.address)
     console.log(`QA Factory ${qaFactory.address} balance before:`, ethers.formatEther(qaBalance), 'ETH')
 
@@ -59,7 +59,7 @@ async function main() {
     }
 
     if (dmcQABalance < tokens(10)) {
-      const mintTx = await dmc.mint(qaFactorySigners[index].address, tokens(100))
+      const mintTx = await dmc.mint(qaFactory.address, tokens(100))
       await mintTx.wait()
       console.log(`  → Minted 100 DMC`)
     } else {
@@ -68,9 +68,9 @@ async function main() {
 
     const qaFactorySigner = qaFactorySigners[index];
 
-    const transaction = await devicesQA.connect(deployer).registerQAFactory(qaFactorySigner.address, qaFactory.name, qaFactory.certificationNumber);
+    const transaction = await devicesQA.connect(deployer).registerQAFactory(qaFactory.address, qaFactory.name, qaFactory.certificationNumber);
     await transaction.wait();
-    console.log(`Registered QA Factory: ${qaFactory.name} with license ${qaFactory.certificationNumber}, address: ${qaFactorySigner.address}`);
+    console.log(`Registered QA Factory: ${qaFactory.name} with license ${qaFactory.certificationNumber}, address: ${qaFactory.address}`);
   }
 
   // now, fund some stablecoins to 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 if 
@@ -78,8 +78,6 @@ async function main() {
   console.log('checking network', hre.network.config)
   console.log('DEPLOYER ADDRESS', deployer.address)
   const [userSigner] = qaFactorySigners.slice(-1)
-
-  console.log('user signer address', userSigner.address, passengerBalance)
 
   writeFileSync('./frontend/.env', `DEVICESQA_CONTRACT_ADDRESS=${address}\nDMC_CONTRACT_ADDRESS=${dmccAddress}\nDEVICE_NFT_CONTRACT_ADDRESS=${deviceNFTAddress}`, { flag: 'w' })
 

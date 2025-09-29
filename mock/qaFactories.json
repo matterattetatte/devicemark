@@ -3,5 +3,10 @@
         "address": "0xa10470C0F296E598945710b3100ca4CC2B43bA20",
         "name": "QualityCorp",
         "certificationNumber": "QA12345"
+    },
+    {
+        "address": "0x1aAB7Da2696f31832064403c4806c07aE1E096a3",
+        "name": "Best Quality Inc.",
+        "certificationNumber": "UI234343"
     }
 ]
