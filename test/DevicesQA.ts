@@ -63,7 +63,15 @@ describe("DevicesQA", () => {
 
     await isIpfsDaemonUp()
 
-    global.ipfsClient = create({ url: 'http://localhost:5001' })
+    const pinataJWT = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJlNjkyMzY3ZC03MTc1LTQ2NTEtYTczZi05Nzg3NmI5ZDY4ZDYiLCJlbWFpbCI6Im1hdGlhcy5tYXJ0aUBtZWRpZWluc3RpdHV0ZXQuc2UiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwicGluX3BvbGljeSI6eyJyZWdpb25zIjpbeyJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MSwiaWQiOiJGUkExIn0seyJkZXNpcmVkUmVwbGljYXRpb25Db3VudCI6MSwiaWQiOiJOWUMxIn1dLCJ2ZXJzaW9uIjoxfSwibWZhX2VuYWJsZWQiOmZhbHNlLCJzdGF0dXMiOiJBQ1RJVkUifSwiYXV0aGVudGljYXRpb25UeXBlIjoic2NvcGVkS2V5Iiwic2NvcGVkS2V5S2V5IjoiZTY4NWI4ODUxZjU5NDMzZTllNTAiLCJzY29wZWRLZXlTZWNyZXQiOiJlOWJmMmY4MDBmMjhiNWI1MGVmMTI5YWJlMzMxNWNmMWViYWZlOTM1ZGU2YTVlOGY1MDczYzEyMDg4Yjk1OGQ5IiwiZXhwIjoxNzkxNzMyMjQzfQ.BY168ltkEMjHXv19mkyuKHNYkzNf08XV7SO6-oMdCv4'; // Get this from your Pinata dashboard
+
+    global.ipfsClient = create({ 
+      url: 'https://indigo-electoral-crocodile-500.mypinata.cloud',
+      headers: {
+        Authorization: `Bearer ${pinataJWT}`,
+      },
+     })
+    // global.ipfsClient = create({ url: 'http://localhost:5001' })
 
     console.log("IPFS node started");
   });
