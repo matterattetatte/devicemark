@@ -17,9 +17,9 @@ async function getFileByCid(cid) {
 }
 
 describe("submitQACheck", () => {
-  let deployer, devicesQA, deviceNFT, dmc, qaFactory, transaction;
+  let deployer, devicesQA, deviceNFT, qaFactory, transaction;
   beforeEach(async () => {
-    ;[{ deployer, devicesQA, dmc, deviceNFT, qaFactory }] = [global as any]
+    ;[{ deployer, devicesQA, deviceNFT, qaFactory }] = [global as any]
 
     const profile = {
       name: "QualityCorp",
@@ -27,8 +27,11 @@ describe("submitQACheck", () => {
     };
 
     transaction = await devicesQA.connect(deployer).registerQAFactory(qaFactory.address, profile.name, profile.certificationNumber);
+    await transaction.wait();
 
-    global.dmc.mint(qaFactory.address, 10)
+    // Allocate IMEI slots for testing (IMEIs 1-100)
+    const imeis = Array.from({ length: 100 }, (_, i) => i + 1);
+    transaction = await devicesQA.connect(deployer).batchAllocateIMEISlots(qaFactory.address, imeis);
     await transaction.wait();
   })
 
@@ -57,14 +60,15 @@ describe("submitQACheck", () => {
 
   transaction = await devicesQA.connect(qaFactory).submitQACheck(nftId, JSON.stringify(funcTests), cosmeticGrade, date, cidStr);
   await transaction.wait();
-  
-  const downloadedData = await getFileByCid(cidStr)
-  
-  const dmcBalance = await dmc.balanceOf(qaFactory.address);
-  
 
-  expect(dmcBalance).to.equal(9);
- 
+  const downloadedData = await getFileByCid(cidStr)
+
+  const slotOwner = await devicesQA.getIMEISlotOwner(nftId);
+  const slotActive = await devicesQA.isIMEISlotActive(nftId);
+
+  expect(slotOwner).to.equal(qaFactory.address);
+  expect(slotActive).to.equal(true);
+
   expect(downloadedData).to.equal(zipData.toString())
   await expect(transaction).to.emit(deviceNFT, "HistoryAdded")
   });
@@ -118,13 +122,15 @@ describe("submitQACheck", () => {
     // Get the NFT and its history
     const nftHistory = await deviceNFT.getHistory(nftId);
     const nftOwner = await deviceNFT.ownerOf(nftId);
-    const dmcBalance = await dmc.balanceOf(qaFactory.address);
+    const slotOwner = await devicesQA.getIMEISlotOwner(nftId);
+    const slotActive = await devicesQA.isIMEISlotActive(nftId);
 
-    expect(dmcBalance).to.equal(10 - qaChecks.length);
+    expect(slotOwner).to.equal(qaFactory.address);
+    expect(slotActive).to.equal(true);
 
     // Verify the history length matches the number of QA checks
     expect(nftHistory.length).to.equal(qaChecks.length);
-    expect(nftOwner).to.equal(qaFactory.address);
+    expect(nftOwner).to.equal(await devicesQA.getAddress());
 
     // Verify each history entry
     qaChecks.forEach((check, index) => {

@@ -14,7 +14,7 @@ export default {
   networks: {
     sonic: {
       url: "https://rpc.testnet.soniclabs.com",
-      accounts: [process.env.SONIC_PRIVATE_KEY, '0x48effaaa4c487766911c853f986fd101edb09ddabaae38a3be45533a13859b52', '0x48effaaa4c487766911c853f986fd101edb09ddabaae38a3be45533a13859b52']
+      accounts: process.env.SONIC_PRIVATE_KEY ? [process.env.SONIC_PRIVATE_KEY, '0x48effaaa4c487766911c853f986fd101edb09ddabaae38a3be45533a13859b52', '0x48effaaa4c487766911c853f986fd101edb09ddabaae38a3be45533a13859b52'] : []
     },
    localhost: {
       chainId: 31337,
