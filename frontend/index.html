@@ -428,9 +428,10 @@
           const projectId = 'B05D21E87DC8C78DB11C';
           const projectSecret = 'U8HHiY0etkwJbxxIJc5eN6puQb64pXccITOOPof5';
 
-          const auth =
-            'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
+          // const auth =
+          //   'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
 
+          const auth = 'Basic QjA1RDIxRTg3REM4Qzc4REIxMUM6VThISGlZMGV0a3dKYnh4SUpjNWVONnB1UWI2NHBYY2NJVE9PUG9mNQ=='
           this.ipfs = await IpfsHttpClient.create({
             url: 'https://ipfs.filebase.io',
             headers: {
