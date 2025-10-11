@@ -1,4 +1,5 @@
 {
+  "homepage": "https://matterattetatte.github.io/devicemark",
   "name": "devices-qa",
   "version": "0.1.0",
   "private": true,
@@ -21,6 +22,7 @@
     "@types/chai": "^4.3.20",
     "@types/serve-handler": "^6.1.4",
     "dotenv": "^17.2.1",
+    "gh-pages": "^6.3.0",
     "hardhat": "^2.25.0",
     "nodemon": "^3.1.10"
   },

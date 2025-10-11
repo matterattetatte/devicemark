@@ -1,0 +1,36 @@
+[
+    {
+        "result": {
+            "data": {
+                "json": {
+                    "address": "Czfq3xZZDmsdGdUyrNLtRhGc47cXcZtLG4crryfu44zE",
+                    "liquidity": "1706377825614090",
+                    "tvl": 65203989.97247878,
+                    "tick": "-14248",
+                    "sqrtPrice": "38860519864141290243870425088",
+                    "price": 0.0041566356220598235,
+                    "feeGrowthGlobal0X128": "10423979126654150501",
+                    "feeGrowthGlobal1X128": "1381673138490863406",
+                    "tickSpacing": 4,
+                    "feeTier": "400",
+                    "token0": {
+                        "symbol": "SOL",
+                        "address": "So11111111111111111111111111111111111111112",
+                        "decimals": 9,
+                        "price": 240.1866564699797,
+                        "coinGeckoId": "wrapped-solana",
+                        "logo": "https://coin-images.coingecko.com/coins/images/21629/large/solana.jpg?1696520989"
+                    },
+                    "token1": {
+                        "symbol": "USDC",
+                        "address": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+                        "decimals": 6,
+                        "price": 0.004163428621293903,
+                        "coinGeckoId": "usd-coin",
+                        "logo": "https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694"
+                    }
+                }
+            }
+        }
+    }
+]
