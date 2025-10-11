@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "replace:env": "node replace-env.js",
-    "deploy:frontend": "npm run replace:env && gh-pages -d frontend && git checkout -- frontend",
+    "deploy:frontend": "npm run replace:env && firebase deploy && git checkout -- frontend",
     "hh:test:debug": "node --inspect-brk node_modules/.bin/hardhat test test/DevicesQA.ts",
     "hh:test": "hardhat test test/DevicesQA.ts",
     "deploy:sonic": "hardhat compile && hardhat run scripts/deploy.js --network sonic",
