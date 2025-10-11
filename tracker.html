@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevicesQA NFT Tracker</title>
+  <script defer id="vue-cdn" src="https://unpkg.com/vue@3.4.38/dist/vue.global.js"></script>
+  <script defer src="https://unpkg.com/ipfs-http-client@60.0.0/dist/index.min.js"></script>
+  <style>
+    @keyframes pump {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .live-indicator {
+      color: #4ade80;
+      font-size: 40px;
+      position: relative;
+      bottom: -5px;
+      display: inline-block;
+      /* Prevents layout issues */
+      animation: pump 1.5s ease-in-out infinite;
+    }
+
+    .badge {
+      margin: 0 auto;
+      width: 110px;
+      display: flex;
+      flex-direction: column;
+      display: flex;
+      align-items: center;
+      color: #f0f8ff;
+      background: #152a5a;
+      color: #ff9c00;
+      padding: 10px 0px;
+      border-radius: 12px;
+      border: 2px solid #ff9c00;
+      box-shadow: 0 2px 8px #152a5a44;
+      font-weight: 600;
+      font-size: 1.1rem;
+      z-index: 2;
+      gap: 8px;
+    }
+
+    .badge-text {
+      color: #f0f8ff;
+      letter-spacing: 0.5px;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="visible" id="spinner"></div>
+  <div id="app">
+    <h1 style="color: #a0c3e9;text-align: center;">IMEI ID: {{ deviceId }}</h1>
+    <br>
+    <center class="badge">
+      <span class="badge-text">DeviceMark<span style="font-size: 7px;padding-bottom: 20px;">®</span> Verified</span>
+      <img class="qr-image" alt='Barcode Generator TEC-IT'
+        :src='`https://barcode.tec-it.com/barcode.ashx?data=${deviceId}&code=MobileQRUrl`' />
+    </center>
+    <div>
+      <p style="text-align:center; font-weight:600; margin-top:16px;"><span class="live-indicator">●</span> Last Fetched
+        from Blockchain: {{ new Date(lastFetched).toLocaleString() }}</p>
+    </div>
+    <div class="timeline">
+      <div v-for="(item, index) in nftQARead" :key="index" style="position:relative;">
+        <history-item :item="item"></history-item>
+        <div v-if="index < nftQARead.length - 1" class="timeline-connector"></div>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1c1f20;
+      color: #f0f8ff;
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    /* Container */
+    #app {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 24px;
+      background: #1c1f20;
+      box-shadow: 0 6px 24px rgba(255, 255, 255, 0.247);
+
+      border-radius: 16px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+      transition: opacity 1s ease-in-out;
+      opacity: 0;
+    }
+
+    #app.visible {
+      opacity: 1;
+    }
+
+    #spinner {
+      position: relative;
+      width: 30px;
+      height: 30px;
+      border: 5px solid #f3f3f3;
+      /* Light grey */
+      border-top: 5px solid #3498db;
+      /* Blue */
+      border-radius: 50%;
+      animation: spin 1.5s linear infinite;
+      margin: 0 auto;
+      transition: opacity 1s ease-in-out;
+      opacity: 0;
+    }
+
+
+    #spinner.visible {
+      opacity: 1;
+    }
+
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Sections */
+    .section {
+      margin-bottom: 28px;
+    }
+
+    .section h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #164e63;
+      margin-bottom: 12px;
+    }
+
+    .section p {
+      font-size: 0.95rem;
+      color: #4b5563;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 28px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background-color: #164e63;
+      color: #ffffff;
+    }
+
+    .btn-primary:hover:not(.btn-disabled) {
+      background-color: #0e7490;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-secondary {
+      background-color: #6b7280;
+      color: #ffffff;
+    }
+
+    .btn-secondary:hover {
+      background-color: #4b5563;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-disabled {
+      background-color: #d1d5db;
+      color: #6b7280;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Inputs */
+    .file-input {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      font-size: 0.95rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      background: #ffffff;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .file-input:focus {
+      outline: none;
+      border-color: #164e63;
+      box-shadow: 0 0 0 3px rgba(22, 78, 99, 0.1);
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 12px;
+      font-size: 0.95rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: #164e63;
+      box-shadow: 0 0 0 3px rgba(22, 78, 99, 0.1);
+    }
+
+    .checkbox {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #164e63;
+    }
+
+    /* Textarea */
+    .textarea {
+      width: 100%;
+      min-height: 180px;
+      padding: 12px;
+      font-size: 0.95rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      resize: vertical;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .textarea:focus {
+      outline: none;
+      border-color: #164e63;
+      box-shadow: 0 0 0 3px rgba(22, 78, 99, 0.1);
+    }
+
+    /* Status Messages */
+    .success {
+      color: #15803d;
+      font-weight: 500;
+      background: #dcfce7;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+
+    .error {
+      color: #b91c1c;
+      font-weight: 500;
+      background: #fee2e2;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+
+    /* Links */
+    .links {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .link {
+      color: #164e63;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .link:hover {
+      color: #0e7490;
+      text-decoration: underline;
+    }
+
+    /* Code Block */
+    .code-block {
+      display: block;
+      margin-top: 16px;
+      padding: 16px;
+      background: #f1f5f9;
+      border-radius: 10px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+      color: #1f2a44;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+
+    /* Timeline Styles */
+    .timeline {
+      position: relative;
+      padding: 0 0 0 20px;
+      margin: 20px 0;
+    }
+
+    .timeline-connector {
+      position: absolute;
+      left: 50%;
+      bottom: -60px;
+      width: 2px;
+      height: 50px;
+      background: linear-gradient(to bottom, #4ade80, #f43f5e);
+    }
+
+    .timeline-connector::after {
+      content: '';
+      position: absolute;
+      bottom: 100%;
+      /* Position above the line */
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-bottom: 10px solid #4ade80;
+      /* This makes the triangle point upwards */
+    }
+
+
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      #app {
+        padding: 16px;
+      }
+
+      .section h2 {
+        font-size: 1.2rem;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+      }
+
+      .input-field,
+      .file-input,
+      .textarea {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+
+
+  <script>
+    const vueScript = document.getElementById('vue-cdn');
+
+    vueScript.addEventListener('load', () => {
+      console.log('Vue.js CDN loaded and ready');
+      setTimeout(() => {
+        document.querySelector('#spinner').classList.remove('visible');
+        document.querySelector('#app').classList.add('visible');
+      }, 3000);
+    });
+
+    vueScript.addEventListener('error', () => {
+      console.error('Failed to load Vue.js CDN');
+    });
+  </script>
+
+
+  <script type="module">
+    var exports = {}
+    const { createApp } = Vue
+    import { createPublicClient, createWalletClient, http, custom } from 'https://esm.sh/viem';
+    import { sonicTestnet } from 'https://esm.sh/viem/chains';
+
+    import HistoryItem from './components/HistoryItem.js';
+
+
+    sonicTestnet.id = 14601; // Override for Sonic Testnet
+
+    createApp({
+      components: {
+        HistoryItem
+      },
+      data() {
+        return {
+          IMEIImg: this.IMEIImg,
+          nftQARead: this.nftQARead,
+        };
+      },
+      async created() {
+        const params = new URLSearchParams(window.location.search);
+        this.deviceId = params.get('deviceId');
+
+
+        this.publicClient = createPublicClient({
+          chain: sonicTestnet,
+          transport: http(),
+        });
+        this.getAllNFTData()
+
+
+      },
+      methods: {
+        async getAllNFTData() {
+          try {
+            const data = await this.publicClient.readContract({
+              address: 'DEVICE_NFT_CONTRACT_ADDRESS',
+              abi: [{
+                "inputs": [
+                  {
+                    "internalType": "uint64",
+                    "name": "deviceId",
+                    "type": "uint64"
+                  }
+                ],
+                "name": "getHistory",
+                "outputs": [
+                  {
+                    "components": [
+                      {
+                        "internalType": "uint256",
+                        "name": "timestamp",
+                        "type": "uint256"
+                      },
+                      {
+                        "internalType": "string",
+                        "name": "funcTests",
+                        "type": "string"
+                      },
+                      {
+                        "internalType": "int8",
+                        "name": "cosmeticGrade",
+                        "type": "int8"
+                      },
+                      {
+                        "internalType": "string",
+                        "name": "date",
+                        "type": "string"
+                      },
+                      {
+                        "internalType": "string",
+                        "name": "ipfsCID",
+                        "type": "string"
+                      }
+                    ],
+                    "internalType": "struct DeviceNFT.HistoryEvent[]",
+                    "name": "",
+                    "type": "tuple[]"
+                  }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+              },],
+              functionName: 'getHistory',
+              args: [BigInt(this.deviceId)]
+            });
+
+
+            data.forEach((item) => {
+              item.ipfsDataUrl = `http://localhost:8080/ipfs/${item.ipfsCID}`
+              item.timestamp = item.timestamp.toString()
+              item.funcTests = JSON.parse(item.funcTests)
+
+              item.cosmeticGrade = {
+                '-1': 'Not graded',
+                '0': 'A+ - Like new',
+                '1': 'A - Excellent',
+                '2': 'B - Very Good',
+                '3': 'C - Good',
+                '4': 'D - Acceptable',
+                '5': 'F - Poor'
+              }[item.cosmeticGrade] || 'Unknown'
+            })
+
+            this.nftQARead = data.reverse()
+            this.lastFetched = Date.now()
+
+
+          } catch (error) {
+            alert('Cannot find data for IMEI ID: ' + this.deviceId);
+            return
+          }
+          setTimeout(() => {
+            this.getAllNFTData()
+          }, 10000)
+        },
+        fetchAndProcessImage: async (url) => {
+          const img = new Image();
+          img.crossOrigin = "anonymous"; // To avoid CORS issues
+          img.src = url;
+
+          await new Promise((resolve) => { img.onload = resolve; });
+
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+
+          ctx.drawImage(img, 0, 0);
+
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const data = imageData.data;
+
+          const targetColor = { r: 160, g: 195, b: 233 }; // Your full target color
+
+          for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+
+            // Check if pixel is not white
+            if (r !== 255 || g !== 255 || b !== 255) {
+              // Calculate brightness (0=black, 1=white)
+              const brightness = (r + g + b) / (3 * 255);
+
+              // Calculate weight = 1 - brightness (1 for black, 0 for white)
+              const weight = 1 - brightness;
+
+              // Interpolate between white and target color based on weight
+              data[i] = Math.round(255 + weight * (targetColor.r - 255));     // Red
+              data[i + 1] = Math.round(255 + weight * (targetColor.g - 255)); // Green
+              data[i + 2] = Math.round(255 + weight * (targetColor.b - 255)); // Blue
+              // Alpha stays the same
+            }
+          }
+
+
+          ctx.putImageData(imageData, 0, 0);
+
+          // Return the canvas or the data URL for further use
+          return canvas.toDataURL();
+        }
+      },
+    }).mount("#app");
+
+  </script>
+</body>
+
+</html>

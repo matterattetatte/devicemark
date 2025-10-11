@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevicesQA NFT Submission</title>
+  <script defer id="vue-cdn" src="https://unpkg.com/vue@3.4.38/dist/vue.global.js"></script>
+  <script defer src="https://unpkg.com/ipfs-http-client@60.0.0/dist/index.min.js"></script>
+  <script defer src="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px;
+      margin-top: 10px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 150px;
+    }
+
+    .status {
+      color: #333;
+    }
+
+    .error {
+      color: red;
+    }
+
+    .success {
+      color: green;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="visible" id="spinner"></div>
+  <div id="app">
+    <div class="section">
+      <h2>Wallet Status</h2>
+      <p>{{ account ? `Connected: ${account}` : 'Not connected' }}</p>
+      <button v-if="!account" @click="connectWallet" class="btn btn-primary">{{ 'Connect Wallet' }}</button>
+    </div>
+    <div class="section">
+      <h2>Upload Test Protocol (.pdf)</h2>
+      <input type="file" accept=".pdf" @change="handleFileChange" class="file-input" />
+    </div>
+    <div class="section">
+      <h2>Date</h2>
+      <input disabled type="text" :value="parsedPDFData?.date" class="input-field" />
+    </div>
+    <div class="section">
+      <h2>IMEI</h2>
+      <input disabled type="number" :value="parsedPDFData?.IMEI" min="1" class="input-field" />
+    </div>
+    <div class="section">
+      <h2>QA Check Passed</h2>
+      <input disabled type="checkbox" :checked="parsedPDFData?.passed" class="checkbox" />
+    </div>
+    <div class="section">
+      <h2>Cosmetic grade</h2>
+      <select v-model="parsedPDFData.cosmeticGrade" class="input-field">
+        <option value="-1" disabled selected>Select grade</option>
+        <option value="0">A+ - Like new</option>
+        <option value="1">A - Excellent</option>
+        <option value="2">B - Very Good</option>
+        <option value="3">C - Good</option>
+        <option value="4">D - Acceptable</option>
+        <option value="5">F - Poor</option>
+      </select>
+    </div>
+    <div class="section">
+      <h2>Fault Codes</h2>
+      <code>
+      {{ parsedPDFData?.faultCodes?.join(', ') || 'N/A' }}
+    </code>
+    </div>
+    <button @click="submitQACheck" :disabled="!file || !account" class="btn btn-primary"
+      :class="{ 'btn-disabled': !file || !account }">Submit QA Check</button>
+    <div class="section">
+      <h2>Status</h2>
+      <p :class="{ error: status.includes('Error'), success: status.includes('Submitted') }">{{ status }}</p>
+      <div v-if="txHash" class="links">
+        <p>Tracker page <a :href="nftTracker" target="_blank" class="link">View Page</a></p>
+        <div style="font-size: 9px;">
+          <h3>Debugging links</h3>
+          <p>Transaction: <a :href="txLink" target="_blank" class="link">View in blockchain explorer</a></p>
+          <p>IMEI: <a :href="nftLink" target="_blank" class="link">View NFT</a></p>
+        </div>
+        <button @click="getAllNFTData" class="btn btn-secondary">Inspect on-chain JSON data</button>
+      </div>
+      <code v-if="nftQARead" class="code-block">
+      {{ nftQARead }}
+    </code>
+    </div>
+  </div>
+
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f8fafc;
+      color: #1f2a44;
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    /* Container */
+    #app {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 24px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+      transition: opacity 1s ease-in-out;
+      opacity: 0;
+    }
+
+    #app.visible {
+      opacity: 1;
+    }
+
+    #spinner {
+      position: relative;
+      width: 30px;
+      height: 30px;
+      border: 5px solid #f3f3f3;
+      /* Light grey */
+      border-top: 5px solid #3498db;
+      /* Blue */
+      border-radius: 50%;
+      animation: spin 1.5s linear infinite;
+      margin: 0 auto;
+      transition: opacity 1s ease-in-out;
+      opacity: 0;
+    }
+
+
+    #spinner.visible {
+      opacity: 1;
+    }
+
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Sections */
+    .section {
+      margin-bottom: 28px;
+    }
+
+    .section h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #164e63;
+      margin-bottom: 12px;
+    }
+
+    .section p {
+      font-size: 0.95rem;
+      color: #4b5563;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 28px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background-color: #164e63;
+      color: #ffffff;
+    }
+
+    .btn-primary:hover:not(.btn-disabled) {
+      background-color: #0e7490;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-secondary {
+      background-color: #6b7280;
+      color: #ffffff;
+    }
+
+    .btn-secondary:hover {
+      background-color: #4b5563;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-disabled {
+      background-color: #d1d5db;
+      color: #6b7280;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Inputs */
+    .file-input {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      font-size: 0.95rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      background: #ffffff;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .file-input:focus {
+      outline: none;
+      border-color: #164e63;
+      box-shadow: 0 0 0 3px rgba(22, 78, 99, 0.1);
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 12px;
+      font-size: 0.95rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: #164e63;
+      box-shadow: 0 0 0 3px rgba(22, 78, 99, 0.1);
+    }
+
+    .checkbox {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: #164e63;
+    }
+
+    /* Textarea */
+    .textarea {
+      width: 100%;
+      min-height: 180px;
+      padding: 12px;
+      font-size: 0.95rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      resize: vertical;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .textarea:focus {
+      outline: none;
+      border-color: #164e63;
+      box-shadow: 0 0 0 3px rgba(22, 78, 99, 0.1);
+    }
+
+    /* Status Messages */
+    .success {
+      color: #15803d;
+      font-weight: 500;
+      background: #dcfce7;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+
+    .error {
+      color: #b91c1c;
+      font-weight: 500;
+      background: #fee2e2;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+
+    /* Links */
+    .links {
+      margin-top: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .link {
+      color: #164e63;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .link:hover {
+      color: #0e7490;
+      text-decoration: underline;
+    }
+
+    /* Code Block */
+    .code-block {
+      display: block;
+      margin-top: 16px;
+      padding: 16px;
+      background: #f1f5f9;
+      border-radius: 10px;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+      color: #1f2a44;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      #app {
+        padding: 16px;
+      }
+
+      .section h2 {
+        font-size: 1.2rem;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+      }
+
+      .input-field,
+      .file-input,
+      .textarea {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+
+  <script>
+    const vueScript = document.getElementById('vue-cdn');
+
+    vueScript.addEventListener('load', () => {
+      console.log('Vue.js CDN loaded and ready');
+      setTimeout(() => {
+        document.querySelector('#spinner').classList.remove('visible');
+        document.querySelector('#app').classList.add('visible');
+      }, 3000);
+    });
+
+    vueScript.addEventListener('error', () => {
+      console.error('Failed to load Vue.js CDN');
+    });
+  </script>
+
+  <script type="module">
+    var exports = {}
+    const { createApp } = Vue
+    import { createPublicClient, createWalletClient, http, custom, defineChain } from 'https://esm.sh/viem';
+    import { sonicTestnet } from 'https://esm.sh/viem/chains'
+
+    sonicTestnet.id = 14601 // hack for now!
+
+    const hardhatLocal = defineChain({
+      id: 31337,               // set this to whatever chainId you've configured for your Hardhat / localhost
+      name: 'hardhat-local',
+      network: 'hardhat-local',
+      nativeCurrency: {
+        name: 'ETH',
+        symbol: 'ETH',
+        decimals: 18,
+      },
+      rpcUrls: {
+        default: {
+          http: ['http://127.0.0.1:8545'],
+        },
+        public: {
+          http: ['http://127.0.0.1:8545'],
+        }
+      }
+    })
+
+
+    createApp({
+      data() {
+        return {
+          account: null,
+          provider: null,
+          contract: null,
+          file: null,
+          parsedPDFData: {},
+          status: "Initializing...",
+          txHash: null,
+          txLink: null,
+          nftLink: null,
+          trackerLink: null,
+          nftQARead: null,
+        };
+      },
+      async created() {
+        // Initialize IPFS client
+        try {
+          this.ipfs = await IpfsHttpClient.create({ host: "localhost", port: 5001, protocol: "http" });
+          this.status = "Connected to local IPFS node";
+        } catch (error) {
+          this.status = "Error: Failed to connect to IPFS node: " + error.message;
+        }
+
+        if (window.ethereum) {
+          window.ethereum.on('accountsChanged', (accounts) => {
+            if (accounts.length === 0) {
+              window.location.href = '/'
+            } else {
+              console.log('🔑 Wallet connected/changed:', accounts[0]);
+              this.account = accounts[0];
+            }
+          });
+          this.publicClient = createPublicClient({
+            chain: sonicTestnet,
+            transport: http()
+          });
+
+          this.walletClient = createWalletClient({
+            chain: sonicTestnet,
+            transport: custom(window.ethereum)
+          });
+
+          console.log('wallet client', this.walletClient)
+          // DevicesQA contract ABI
+          const devicesQAABI = [
+            {
+              "inputs": [
+                {
+                  "internalType": "uint64",
+                  "name": "deviceId",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "string",
+                  "name": "funcTests",
+                  "type": "string"
+                },
+                {
+                  "internalType": "int8",
+                  "name": "cosmeticGrade",
+                  "type": "int8"
+                },
+                {
+                  "internalType": "string",
+                  "name": "date",
+                  "type": "string"
+                },
+                {
+                  "internalType": "string",
+                  "name": "ipfsCID",
+                  "type": "string"
+                }
+              ],
+              "name": "submitQACheck",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "int64",
+                  "name": "deviceId",
+                  "type": "int64"
+                }
+              ],
+              "name": "getQACheck",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "factory",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "passed",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "string",
+                  "name": "details",
+                  "type": "string"
+                },
+                {
+                  "internalType": "int64",
+                  "name": "timestamp",
+                  "type": "int64"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "NotAllowed",
+              "type": "error"
+            },
+          ];
+
+          this.contract = { address: 'DEVICESQA_CONTRACT_ADDRESS', abi: devicesQAABI, chainId: sonicTestnet.id };
+        } else {
+          this.status = "Error: Please install MetaMask";
+        }
+      },
+      methods: {
+        async connectWallet() {
+          try {
+            await this.walletClient.switchChain({ id: sonicTestnet.id });
+            const [addr] = await this.walletClient.requestAddresses();
+            this.account = addr
+            this.status = `Wallet connected: ${this.account}`;
+          } catch (error) {
+            console.error(error)
+            this.status = "Error: Failed to connect wallet: " + error.message;
+          }
+        },
+        handleFileChange(event) {
+          this.file = event.target.files[0];
+          this.status = this.file ? `File selected: ${this.file.name}` : "No file selected";
+          this.parsedPDFData = {};
+
+          if (this.file) {
+            const fileReader = new FileReader();
+            fileReader.onload = async (e) => {
+              const typedarray = new Uint8Array(e.target.result);
+              const pdf = await window.pdfjsLib.getDocument(typedarray).promise;
+              let textContent = '';
+              for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const text = await page.getTextContent();
+                textContent += text.items.map(item => item.str).join(' ');
+              }
+
+              const [verdictAndIMEI, _, date, __, table] = textContent.split(/Device Maker|Memory Size|Test Result|Date:/)
+
+              const [verdict, IMEI] = verdictAndIMEI.trim().split('  ').slice(-2)
+
+              const failsCount = (table.match(/FAIL/gi) || []).length
+              const passesCount = (table.match(/PASS/gi) || []).length
+
+              const faultCodes = table.split('ime   Result  ')[1].replace(/FAIL/gi, 'FAIL\n').replace(/SKIP/gi, 'SKIP\n').replace(/PASS/gi, 'PASS\n').split('\n')
+
+              const summary = {
+                passed: verdict.trim() === 'SUCCESS',
+                IMEI: IMEI.trim(),
+                faultCodes: faultCodes.reduce((acc, line) => {
+                  // Accelerometer Sensor 8171 PASS
+                  // check if it ends with FAIL, then return the whole string apart from the last word
+                  if (line.trim().endsWith('FAIL')) {
+                    acc.push(line.trim().split(' ').slice(0, -1).join(' '))
+                  }
+                  return acc
+                }, []),
+                date: date.trim(),
+                funcTestsCount: passesCount + failsCount,
+                funcTestsPassedCount: passesCount,
+                cosmeticGrade: -1,
+              }
+
+              this.parsedPDFData = summary
+              this.status = "PDF parsed successfully!";
+            };
+            fileReader.readAsArrayBuffer(this.file);
+          }
+        },
+        async submitQACheck() {
+          if (!this.file || !this.account) {
+            this.status = "Error: Please connect wallet and select a file";
+            return;
+          }
+
+          try {
+            this.status = "Uploading to IPFS...";
+
+            const fileBuffer = await this.file.arrayBuffer();
+
+            const fileData = new Uint8Array(fileBuffer);
+
+            const { cid } = await this.ipfs.add(fileData, {
+              // pin: true, // Pin the file on IPFS
+            });
+            const ipfsCID = cid.toString();
+            this.status = `Uploaded to IPFS with CID: ${ipfsCID}`;
+
+            const funcTests = {
+              verdict: this.parsedPDFData.passed ? "PASS" : "FAIL",
+              total: this.parsedPDFData.funcTestsCount,
+              passed: this.parsedPDFData.funcTestsPassedCount,
+              faultCodes: this.parsedPDFData.faultCodes,
+            }
+
+            const data = {
+              address: this.contract.address,
+              abi: this.contract.abi,
+              functionName: 'submitQACheck',
+              args: [BigInt(this.parsedPDFData.IMEI), JSON.stringify(funcTests), this.parsedPDFData.cosmeticGrade, this.parsedPDFData.date, ipfsCID],
+              account: this.account,
+            }
+
+            this.status = "Submitting to blockchain...";
+
+            const estimatedGas = await this.publicClient.estimateContractGas(data);
+            console.log('Estimated gas:', estimatedGas)
+
+            const hash = await this.walletClient.writeContract({
+              ...data,
+              gas: estimatedGas || BigInt(300000),
+            });
+
+            const receipt = await this.publicClient.waitForTransactionReceipt({ hash });
+            this.status = `Submitted QA check for device with IMEI ${this.parsedPDFData.IMEI} with CID: ${ipfsCID}`;
+            this.txHash = receipt.transactionHash;
+
+            this.txLink = `https://testnet.sonicscan.org/tx/${this.txHash}`;
+            this.nftLink = `https://testnet.sonicscan.org/nft/DEVICE_NFT_CONTRACT_ADDRESS/${this.parsedPDFData.IMEI}`;
+            this.nftTracker = `tracker?deviceId=${this.parsedPDFData.IMEI}`;
+          } catch (error) {
+            console.log(error)
+            this.status = "Error: " + error.message;
+          }
+        },
+        async getAllNFTData() {
+          const data = await this.publicClient.readContract({
+            address: 'DEVICE_NFT_CONTRACT_ADDRESS',
+            abi: [{
+              "inputs": [
+                {
+                  "internalType": "uint64",
+                  "name": "deviceId",
+                  "type": "uint64"
+                }
+              ],
+              "name": "getHistory",
+              "outputs": [
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "timestamp",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "string",
+                      "name": "funcTests",
+                      "type": "string"
+                    },
+                    {
+                      "internalType": "int8",
+                      "name": "cosmeticGrade",
+                      "type": "int8"
+                    },
+                    {
+                      "internalType": "string",
+                      "name": "date",
+                      "type": "string"
+                    },
+                    {
+                      "internalType": "string",
+                      "name": "ipfsCID",
+                      "type": "string"
+                    }
+                  ],
+                  "internalType": "struct DeviceNFT.HistoryEvent[]",
+                  "name": "",
+                  "type": "tuple[]"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },],
+            functionName: 'getHistory',
+            args: [BigInt(this.parsedPDFData.IMEI)]
+          });
+
+
+          data.forEach((item) => {
+            item.ipfsDataUrl = `http://localhost:8080/ipfs/${item.ipfsCID}`
+            item.timestamp = item.timestamp.toString()
+          })
+
+          this.nftQARead = JSON.stringify(data, null, 4)
+        }
+      },
+    }).mount("#app");
+  </script>
+</body>
+
+</html>
