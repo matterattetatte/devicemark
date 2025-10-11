@@ -527,7 +527,7 @@
             },
           ];
 
-          this.contract = { address: '0xc3C3FD5c63c86AAeC873722a5A7069397a25321B', abi: devicesQAABI, chainId: sonicTestnet.id };
+          this.contract = { address: 'DEVICESQA_CONTRACT_ADDRESS', abi: devicesQAABI, chainId: sonicTestnet.id };
         } else {
           this.status = "Error: Please install MetaMask";
         }
@@ -642,7 +642,7 @@
             this.txHash = receipt.transactionHash;
 
             this.txLink = `https://testnet.sonicscan.org/tx/${this.txHash}`;
-            this.nftLink = `https://testnet.sonicscan.org/nft/0xCA88574C5722485DEEdE3aaC0303B661B1b4264C/${this.parsedPDFData.IMEI}`;
+            this.nftLink = `https://testnet.sonicscan.org/nft/DEVICE_NFT_CONTRACT_ADDRESS/${this.parsedPDFData.IMEI}`;
             this.nftTracker = `tracker?deviceId=${this.parsedPDFData.IMEI}`;
           } catch (error) {
             console.log(error)
@@ -651,7 +651,7 @@
         },
         async getAllNFTData() {
           const data = await this.publicClient.readContract({
-            address: '0xCA88574C5722485DEEdE3aaC0303B661B1b4264C',
+            address: 'DEVICE_NFT_CONTRACT_ADDRESS',
             abi: [{
               "inputs": [
                 {
