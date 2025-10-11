@@ -484,7 +484,7 @@
 
 
             data.forEach((item) => {
-              item.ipfsDataUrl = `https://envious-lavender-chimpanzee.myfilebase.com/${item.ipfsCID}`
+              item.ipfsDataUrl = `http://localhost:8080/ipfs/${item.ipfsCID}`
               item.timestamp = item.timestamp.toString()
               item.funcTests = JSON.parse(item.funcTests)
 
