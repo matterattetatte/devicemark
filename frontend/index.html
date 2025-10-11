@@ -431,12 +431,12 @@
           // const auth =
           //   'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
 
-          const auth = 'Basic QjA1RDIxRTg3REM4Qzc4REIxMUM6VThISGlZMGV0a3dKYnh4SUpjNWVONnB1UWI2NHBYY2NJVE9PUG9mNQ=='
+          // const auth = 'Basic QjA1RDIxRTg3REM4Qzc4REIxMUM6VThISGlZMGV0a3dKYnh4SUpjNWVONnB1UWI2NHBYY2NJVE9PUG9mNQ=='
           this.ipfs = await IpfsHttpClient.create({
-            url: 'https://corsproxy.io/?url=https://ipfs.filebase.io',
-            headers: {
-              Authorization: auth,
-            },
+            url: 'https://ipfs.filebase.io',
+            // headers: {
+            //   Authorization: auth,
+            // },
           });
           this.status = "Connected to local IPFS node";
         } catch (error) {
@@ -539,7 +539,7 @@
             },
           ];
 
-          this.contract = { address: 'DEVICESQA_CONTRACT_ADDRESS', abi: devicesQAABI, chainId: sonicTestnet.id };
+          this.contract = { address: '0xc3C3FD5c63c86AAeC873722a5A7069397a25321B', abi: devicesQAABI, chainId: sonicTestnet.id };
         } else {
           this.status = "Error: Please install MetaMask";
         }
@@ -654,7 +654,7 @@
             this.txHash = receipt.transactionHash;
 
             this.txLink = `https://testnet.sonicscan.org/tx/${this.txHash}`;
-            this.nftLink = `https://testnet.sonicscan.org/nft/DEVICE_NFT_CONTRACT_ADDRESS/${this.parsedPDFData.IMEI}`;
+            this.nftLink = `https://testnet.sonicscan.org/nft/0xCA88574C5722485DEEdE3aaC0303B661B1b4264C/${this.parsedPDFData.IMEI}`;
             this.nftTracker = `tracker?deviceId=${this.parsedPDFData.IMEI}`;
           } catch (error) {
             console.log(error)
@@ -663,7 +663,7 @@
         },
         async getAllNFTData() {
           const data = await this.publicClient.readContract({
-            address: 'DEVICE_NFT_CONTRACT_ADDRESS',
+            address: '0xCA88574C5722485DEEdE3aaC0303B661B1b4264C',
             abi: [{
               "inputs": [
                 {
