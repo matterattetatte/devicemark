@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+
+<body>
+    <iframe></iframe>
+</body>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const cid = urlParams.get('cid');
+    console.log(cid);
+    if (cid) {
+        const [iframe] = document.getElementsByTagName('iframe');
+        iframe.src = `https://indigo-electoral-crocodile-500.mypinata.cloud/ipfs/${cid}`;
+        iframe.width = "100%";
+        iframe.height = "800px";
+        document.body.appendChild(iframe);
+    } else {
+        document.body.innerHTML = "<h1>No CID provided</h1>";
+    }
+</script>
+
+</html>

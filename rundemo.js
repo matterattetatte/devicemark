@@ -33,9 +33,11 @@ export default async (req, res) => {
     .replace(/DEVICESQA_CONTRACT_ADDRESS/g, process.env.DEVICESQA_CONTRACT_ADDRESS)
     .replace(/DEVICE_NFT_CONTRACT_ADDRESS/g, process.env.DEVICE_NFT_CONTRACT_ADDRESS)
     ;
+  } else if (req.url.includes('rawdata')) {
+    return readFileSync('./frontend/rawdata.html').toString()
   } else if (req.url.includes('favicon.ico')) {
     res.setHeader('Content-Type', 'image/x-icon');
-    return readFileSync('./frontend/favicon.jpg');
+    return readFileSync('./frontend/favicon.ico');
   } else {
     return readFileSync('./frontend/index.html').toString()
     .replace(/DEVICESQA_CONTRACT_ADDRESS/g, process.env.DEVICESQA_CONTRACT_ADDRESS)
