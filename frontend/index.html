@@ -745,7 +745,7 @@
 
 
           data.forEach((item) => {
-            item.ipfsDataUrl = `https://indigo-electoral-crocodile-500.mypinata.cloud/ipfs/${item.ipfsCID}`
+            item.ipfsDataUrl = `https://devicestamp.web.app/rawdata?cid=${item.ipfsCID}`;
             item.timestamp = item.timestamp.toString()
           })
 
