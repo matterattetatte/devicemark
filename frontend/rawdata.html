@@ -17,7 +17,7 @@
     console.log(cid);
     if (cid) {
         const [iframe] = document.getElementsByTagName('iframe');
-        iframe.src = `https://devicestamp.web.app/rawdata?cid=${cid}`;
+        iframe.src = `https://indigo-electoral-crocodile-500.mypinata.cloud/ipfs/${cid}`;
         iframe.width = "100%";
         iframe.height = "800px";
         document.body.appendChild(iframe);
