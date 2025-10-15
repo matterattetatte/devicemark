@@ -51,3 +51,8 @@ This code allows QA Factories to upload QA test data to decentralized immutable 
 3. Upload optional pictures (xxx USD) , calculate size times time and display in frontend.
 4. Tracker page first - smaller text in parenthesis (debug links on blockchain explorer: .....)
 5. Get all data for NFT -> inspect onchain json data
+
+
+
+### Hosting frontend on Walrus Sui
+Faucet for Sui tokens on testnet: https://faucet.n1stake.com/

@@ -5,12 +5,12 @@ import {config} from "dotenv"
 config({ path: './frontend/.env' })
 
 console.log('Starting IPFS node...')
-execSync('rm -rf ~/.ipfs')
-execSync('ipfs init --profile server')
-execSync('ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin \'["*"]\'')
-execSync('ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods \'["GET", "POST", "PUT"]\'')
-execSync('ipfs config --json API.HTTPHeaders.Access-Control-Allow-Headers \'["Authorization", "Content-Type"]\'')
-exec('npx ipfs daemon')
+// execSync('rm -rf ~/.ipfs')
+// execSync('ipfs init --profile server')
+// execSync('ipfs config --json API.HTTPHeaders.Access-Control-Allow-Origin \'["*"]\'')
+// execSync('ipfs config --json API.HTTPHeaders.Access-Control-Allow-Methods \'["GET", "POST", "PUT"]\'')
+// execSync('ipfs config --json API.HTTPHeaders.Access-Control-Allow-Headers \'["Authorization", "Content-Type"]\'')
+// exec('npx ipfs daemon')
 
 export default async (req, res) => {
   console.log('Incoming request: ' + req.url);

@@ -4,6 +4,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "getWalTokens": "walrus get-wal",
+    "deploy:frontend:wal": "site-builder publish ./frontend --epochs 1",
     "replace:env": "node replace-env.js",
     "deploy:frontend": "npm run replace:env && firebase deploy && git checkout -- frontend",
     "hh:test:debug": "node --inspect-brk node_modules/.bin/hardhat test test/DevicesQA.ts",
@@ -24,7 +26,6 @@
     "@types/chai": "^4.3.20",
     "@types/serve-handler": "^6.1.4",
     "dotenv": "^17.2.1",
-    "gh-pages": "^6.3.0",
     "hardhat": "^2.25.0",
     "nodemon": "^3.1.10"
   },

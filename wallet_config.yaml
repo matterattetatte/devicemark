@@ -1,0 +1,10 @@
+keystore:
+  File: /home/matias/.sui/sui_config/sui.keystore
+external_keys: ~
+envs:
+  - alias: testnet
+    rpc: "https://fullnode.testnet.sui.io:443"
+    ws: ~
+    basic_auth: ~
+active_env: testnet
+active_address: "0xc8aa61129b23b4fed08a2765a2cd9b0805af7df102366332411673efff88d14d"
