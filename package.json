@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "getWalTokens": "walrus get-wal",
-    "deploy:frontend:wal": "site-builder publish ./frontend --epochs 1",
+    "deploy:frontend:wal": "site-builder publish ./frontend --epochs 53",
     "replace:env": "node replace-env.js",
     "deploy:frontend": "npm run replace:env && firebase deploy && git checkout -- frontend",
     "hh:test:debug": "node --inspect-brk node_modules/.bin/hardhat test test/DevicesQA.ts",
