@@ -56,3 +56,16 @@ This code allows QA Factories to upload QA test data to decentralized immutable 
 
 ### Hosting frontend on Walrus Sui
 Faucet for Sui tokens on testnet: https://faucet.n1stake.com/
+https://faucet.sui.io/
+
+
+### UPloaded frontend
+https://6sm69gvj21kq6ky24ygra7smuxg5h4ntxqylq6rlh2myzo7p0.buildonwalrus.dev/tracker.html
+
+https://devicestamp.buildonwalrus.dev/tracker.html
+
+
+bought domain at https://testnet.suins.io/
+
+
+Next steps: how to handle devicdstamp.blockchain
