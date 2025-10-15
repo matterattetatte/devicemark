@@ -69,3 +69,24 @@ bought domain at https://testnet.suins.io/
 
 
 Next steps: how to handle devicdstamp.blockchain
+
+
+Fixing nicer urls:
+
+Extensionless URLs
+By default, Walrus Sites do not automatically rewrite extensionless URLs to .html files.
+This means that if you have a file called tracker.html, visiting /tracker will not automatically serve tracker.html unless you specifically add a resource for /tracker or configure your build to support this.
+
+How to Support Extensionless URLs
+Option 1: Duplicate the Resource
+
+Upload both tracker.html and a copy named tracker (without extension) as resources in your Walrus Site.
+This way, both /tracker.html and /tracker will work.
+Option 2: Use index.html in Folders
+
+If you want /tracker/ to work, create a folder called tracker and put an index.html inside it.
+Upload the folder structure so that /tracker/index.html is available. Then, /tracker/ will serve the page.
+Option 3: Custom Routing (Not Natively Supported)
+
+There is no mention in the Walrus Sites documentation of a built-in way to rewrite URLs or handle extensionless routing automatically like Netlify/Vercel.
+You would need to handle this at build time (e.g., with your static site generator) by generating both versions of each page.
