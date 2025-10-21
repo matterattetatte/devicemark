@@ -35,6 +35,16 @@
       animation: pump 1.5s ease-in-out infinite;
     }
 
+    .live-indicator__error {
+      color: red;
+      font-size: 40px;
+      position: relative;
+      bottom: -5px;
+      display: inline-block;
+      /* Prevents layout issues */
+      animation: pump 1.5s ease-in-out infinite;
+    }
+
     .badge {
       margin: 0 auto;
       width: 110px;
@@ -74,8 +84,13 @@
         :src='`https://barcode.tec-it.com/barcode.ashx?data=${deviceId}&code=MobileQRUrl`' />
     </center>
     <div>
-      <p style="text-align:center; font-weight:600; margin-top:16px;"><span class="live-indicator">●</span> Last Fetched
+      <!-- TODO: LIVE INDICATOR SHOULD BE RED IF WE HAVE AN ERROR!!! -->
+      <p style="text-align:center; font-weight:600; margin-top:16px;"><span :class="`live-indicator${error ? '__error' : ''} `">●</span> Last Fetched
         from Blockchain: {{ new Date(lastFetched).toLocaleString() }}</p>
+    </div>
+    <div v-if="error" class="error section">
+      <h2>Error</h2>
+      <p>{{ error.message }}</p>
     </div>
     <div class="timeline">
       <div v-for="(item, index) in nftQARead" :key="index" style="position:relative;">
@@ -412,6 +427,7 @@
         return {
           IMEIImg: this.IMEIImg,
           nftQARead: this.nftQARead,
+          error: null,
         };
       },
       async created() {
@@ -504,7 +520,8 @@
 
 
           } catch (error) {
-            alert('Cannot find data for IMEI ID: ' + this.deviceId);
+            this.lastFetched = Date.now()
+            this.error = new Error('Cannot find data for IMEI ID: ' + this.deviceId)
             return
           }
           setTimeout(() => {
